@@ -1,0 +1,28 @@
+send_mqtt_20min:
+  alias: "Send MQTT for 20 minutes"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/switch/RGBled/set"
+        payload: '{"method":"turnOn", "durationHours":0, "durationMinutes":20 }'
+        qos: 0
+  mode: single
+  
+turn_off_relay:
+  alias: "Turn Relay OFF"
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: "homeassistant/switch/RGBled/set"
+        payload: '{"method":"turnOff"}'
+        qos: 0
+  mode: single
+  
+
+turn_on_with_duration:
+  sequence:
+    - service: mqtt.publish
+      data:
+        topic: homeassistant/switch/supersmart3/set
+        payload: >-
+            {"method":"turnOn", "durationHours":{{ states('input_number.duration_hours') | int }}, "durationMinutes":{{ states('input_number.duration_minutes') | int }}}

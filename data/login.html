@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css?##VERSION##" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script>
+    // Immediately detect app-embedded mode before any rendering to prevent logo flash
+    (function() {
+      var p = new URLSearchParams(window.location.search);
+      if (p.get("app") === "true" || sessionStorage.getItem("appEmbeddedMode") === "true") {
+        document.documentElement.classList.add("app-embedded");
+      }
+    })();
+  </script>
+  <script src="scripts/common.js?##VERSION##" defer></script>
+  <script src="scripts/help.js?##VERSION##" defer></script>
+  <script src="scripts/validation.js?##VERSION##" defer></script>
+  <title>SwiGO SuperSmart</title>
+  <style>
+    body { background: #fff; }
+    .login-wrapper {
+      /* max-width: 400px;
+      margin: 0 auto; */
+      padding: 1.5rem 0.5rem;
+    }
+    .login-card {
+      width: 100%;
+    }
+    .login-body {
+      background: #FAFAFA;
+      border: 1px solid rgba(0, 66, 37, 0.18);
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      padding: 16px 20px;
+    }
+    .login-field {
+      margin-bottom: 14px;
+    }
+    .login-field label {
+      font-size: 0.78rem;
+      color: #666;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .login-field .field-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .login-input {
+      width: 140px;
+      padding: 4px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .login-input:focus { border-color: #2e7d32; }
+    .login-eye {
+      cursor: pointer;
+      color: #999;
+      display: flex;
+      align-items: center;
+    }
+    .login-eye svg { width: 20px; height: 20px; }
+    .login-remember {
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #666;
+      margin: 14px 0;
+    }
+    .login-remember input { accent-color: #2e7d32; }
+    .login-submit-btn {
+      display: block;
+      width: 100%;
+      
+      background: #2e3b2e;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 12px ;
+  
+    }
+    .login-submit-btn:hover { background: #3a4d3a; }
+    .login-info {
+      margin-bottom: 14px;
+      position: relative;
+      text-align: right;
+    }
+    /* Right-aligned in normal flow: .login-info has no other content, so an
+       absolutely positioned icon would collapse the row to zero height. */
+    .login-info .help-i { position: static; font-size: 0.9rem; }
+    .login-info-text {
+      font-size: 0.78rem;
+      color: #888;
+    }
+    #error-msg {
+      color: #d32f2f;
+      font-size: 0.82rem;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-eye" viewBox="0 0 576 512">
+      <path
+        d="M288 0C128.94 0 3.85 114.61.3 266.34c-.8 32.34 11.94 63.22 36.02 87.29 10.1 10.09 20.68 19.2 31.87 27.5 62.94 44.48 143.53 68.87 219.82 68.87 144.1 0 269.5-114.6 273-266.34C575.7 82.65 463.96 0 288 0zM287.6 368c-52.76 0-95.96-43.23-95.96-96s43.2-96 95.96-96c52.77 0 95.98 43.22 95.98 96S340.37 368 287.6 368zm0-160a63.73 63.73 0 0 0-63.71 63.7 63.7 63.7 0 0 0 127.41 0A63.73 63.73 0 0 0 287.6 208z" />
+    </symbol>
+  </svg>
+
+  <div class="main-container">
+    <header class="nav-bar">
+      <div id="header-brand-bar">
+        <a href="/" style="float:left;">
+          <img src="images/logo.png" class="logo" />
+        </a>
+        <br clear="all" />
+      </div>
+      <div class="v9-header-row" style="display:flex; align-items:center; width:100%;">
+        <h2 class="wpg-heading" style="display: block;" id="switchNameText">SuperSmart</h2>
+      </div>
+    </header>
+
+    <div class="page">
+  <div class="login-wrapper">
+    <div class="login-card">
+      <p style="font-size: 0.82rem; color: #888; margin: 6px 0 10px; padding: 0 2px;">Enter your PIN to unlock the device.</p>
+
+      <div class="login-body">
+        <div class="login-info">
+          <button type="button" class="help-i" data-help="login.pin" aria-label="Help"></button></div>
+
+        <div class="login-field">
+          <label for="pin">Security PIN</label>
+          <div class="field-row">
+            <input type="password" id="pin" class="login-input" name="pin"
+              inputmode="numeric" title="Any 4 digit number" maxlength="4" minlength="4" pattern="\d{4}" required />
+            <span class="login-eye" onclick="viewPassword('pin')">
+              <svg viewBox="0 0 576 512"><use href="#icon-eye"></use></svg>
+            </span>
+          </div>
+        </div>
+
+        <label class="login-remember">
+          <input type="checkbox" id="rememberPin" />
+          Remember PIN
+        </label>
+
+        <input type="button" id="submitPin" class="login-submit-btn" value="Unlock" />
+        <p id="error-msg"></p>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <script>
+    // Help tooltips are handled by the shared renderer in scripts/help.js.
+
+    // Restore saved PIN if "Remember PIN" was previously checked
+    document.addEventListener("DOMContentLoaded", () => {
+      var savedPin = localStorage.getItem("devicePin");
+      var rememberChecked = localStorage.getItem("rememberPin") === "true";
+      if (savedPin && rememberChecked) {
+        document.getElementById("pin").value = savedPin;
+        document.getElementById("rememberPin").checked = true;
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchWT("/dn.htm").then((response) => {
+        const v = response.headers.get("switchName");
+        if (v) {
+          var e = _qs("#switchNameText");
+          if (e) {
+            e.innerText = v;
+            document.title = v + " - SwiGO SuperSmart";
+          }
+        }
+      });
+    });
+
+    (function () {
+      var pinInput = document.getElementById("pin");
+      var isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+
+      // Keep only digits, max 4. On touch devices, dismiss the on-screen
+      // keyboard automatically once all 4 digits have been entered.
+      pinInput.addEventListener("input", function () {
+        var digits = this.value.replace(/\D/g, "").slice(0, 4);
+        if (this.value !== digits) this.value = digits;
+        if (digits.length === 4 && isTouchDevice) {
+          this.blur();
+        }
+      });
+
+      // On wide displays, pressing Enter after 4 digits starts submit.
+      pinInput.addEventListener("keypress", function (event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          if (this.value.length === 4) {
+            document.getElementById("submitPin").click();
+          }
+        }
+      });
+    })();
+
+    document.getElementById("submitPin").addEventListener("click", function () {
+      function submitPin() {
+        var pin = document.getElementById("pin").value;
+        if (!pin || pin.trim() === "") {
+          alert("Please enter a valid PIN");
+          return;
+        }
+        const now = new Date();
+        const timezoneOffset = -now.getTimezoneOffset();
+        var time = now.toISOString().replace(/\.\d{3}Z$/, "Z");
+        var data = JSON.stringify({ devicePin: pin, deviceTime: time, timezoneOffset: timezoneOffset });
+
+        fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: data,
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              var rememberCheckbox = document.getElementById("rememberPin");
+              if (rememberCheckbox && rememberCheckbox.checked) {
+                localStorage.setItem("devicePin", pin);
+                localStorage.setItem("rememberPin", "true");
+              } else {
+                localStorage.removeItem("devicePin");
+                localStorage.removeItem("rememberPin");
+              }
+
+              const urlParams = new URLSearchParams(window.location.search);
+              const returnUrl = urlParams.get('returnUrl');
+
+              if (returnUrl) {
+                window.location.href = decodeURIComponent(returnUrl);
+              } else {
+                localStorage.removeItem('selectedTab');
+                window.location.href = '/';
+              }
+            } else {
+              document.getElementById('error-msg').textContent = data.message;
+              document.getElementById('error-msg').style.display = 'block';
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('error-msg').textContent = 'An error occurred. Please try again.';
+            document.getElementById('error-msg').style.display = 'block';
+          });
+      }
+      submitPin();
+    });
+
+    function loadResources() {
+      const resources = [
+        'css/style_additional.css?##VERSION##',
+        'scripts/logmessages.js?##VERSION##',
+        'scripts/validation.js?##VERSION##',
+        'scripts/script.js?##VERSION##',
+        'scripts/script_additional.js?##VERSION##',
+        'scripts/script_sch.js?##VERSION##',
+        'scripts/script_power.js?##VERSION##',
+        'images/home.png',
+        'images/schedule.png',
+        'images/power.png',
+        'images/settings.png',
+        'images/wifi_e.svg',
+        'images/wifi_g.svg',
+        'images/wifi_w.svg',
+        'images/ap.png',
+        'images/ethernet_icon.svg',
+        'settingstab.html?##VERSION##'
+      ];
+      let index = 0;
+
+      function loadNext() {
+        if (index >= resources.length) {
+          console.log('All resources loaded');
+          return;
+        }
+        const resource = resources[index];
+        const baseResource = resource.split('?')[0];
+        if (baseResource.endsWith('.js')) {
+          const script = document.createElement('script');
+          script.src = resource;
+          script.onload = () => { index++; loadNext(); };
+          script.onerror = () => { index++; loadNext(); };
+          document.head.appendChild(script);
+        } else if (baseResource.endsWith('.css')) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = resource;
+          link.onload = () => { index++; loadNext(); };
+          link.onerror = () => { index++; loadNext(); };
+          document.head.appendChild(link);
+        } else if (baseResource.endsWith('.png') || baseResource.endsWith('.svg')) {
+          const img = new Image();
+          img.src = resource;
+          img.onload = () => { index++; loadNext(); };
+          img.onerror = () => { index++; loadNext(); };
+        } else {
+          index++;
+          loadNext();
+        }
+      }
+      loadNext();
+    }
+
+    window.onload = loadResources;
+  </script>
+</body>
+
+</html>

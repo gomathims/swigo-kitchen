@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css?##VERSION##" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <!-- <script src="scripts/logmessages.js" defer></script> -->
+  <script src="scripts/common.js?##VERSION##" defer></script>
+  <script src="scripts/help.js?##VERSION##" defer></script>
+  <script src="scripts/validation.js?##VERSION##" defer></script>
+  <!-- <script src="scripts/script.js" defer></script> -->
+  <title>SwiGO Super Smart</title>
+</head>
+
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-eye" viewBox="0 0 576 512">
+        <path d="M288 0C128.94 0 3.85 114.61.3 266.34c-.8 32.34 11.94 63.22 36.02 87.29 10.1 10.09 20.68 19.2 31.87 27.5 62.94 44.48 143.53 68.87 219.82 68.87 144.1 0 269.5-114.6 273-266.34C575.7 82.65 463.96 0 288 0zM287.6 368c-52.76 0-95.96-43.23-95.96-96s43.2-96 95.96-96c52.77 0 95.98 43.22 95.98 96S340.37 368 287.6 368zm0-160a63.73 63.73 0 0 0-63.71 63.7 63.7 63.7 0 0 0 127.41 0A63.73 63.73 0 0 0 287.6 208z"/>
+    </symbol>
+</svg>
+  <div class="main-container">
+      <div class="main-container">
+    <header class="nav-bar" >
+      <div>
+        <a href="/" style="float:left;">
+          <img src="images/logo.png" class="logo" />
+        </a>
+        <div  style="float:right;">
+          <div class="logo-images" >
+            <img src="images/wifi_e.svg" id="wifi-e" title="Wifi Excellant" alt="Wifi Excellant" style="display: none;" />
+            <img src="images/wifi_g.svg" id="wifi-g" title="Wifi Good" alt="Wifi Good" style="display: none;" />
+            <img src="images/wifi_w.svg" id="wifi-w" title="Wifi Weak" alt="Wifi Weak" style="display:none;" />
+            <img src="images/ap.png" id="apIcon" title="Access Point" alt="Access Point" style="display: none;" />
+          </div>
+        
+          <span id="apwifiName" style="display: block; font-size: .6rem; "></span>
+        </div>
+      </div>
+      <br clear="all" />
+      <hr style="margin: 5px 0px; border-top: 1px solid #ccc;" />
+
+      <a href="/" class="switch-name-link" style="float:left;">
+        <h2 class="wpg-heading" style="display: block;" id="switchNameText">SuperSmart</h2>
+      </a>
+    </header>
+
+    <div class="page" style="margin-top:6.5rem;">
+      
+
+      <main id="content">
+       
+
+        
+
+        <div class="power-settings-container padding-outer-2 " >
+          <div class="power-settings gap-flex">
+            
+            <h4 class="main-heading">Cloud Server Settings</h4>
+            <div class="pcard pd2">
+              <div class="hc pr">
+                <h4 class="sh">Sync control</h4>
+                <button type="button" class="help-i" data-help="mqtt.sync" aria-label="Help"></button></div>
+              <div class="pid cn ff" style="margin: 10px 0px">
+                <p class="power-content">Do you want to Send data to cloud?</p>
+                <br />
+                <div>
+                  <input type="radio" class="cloud-sync" name="cloud-sync" value="1" />
+                  <label>Yes</label>
+                </div>
+                <div>
+                  <input type="radio" class="cloud-sync" name="cloud-sync" value="0" checked/>
+                  <label>No</label>
+                </div>
+                
+              </div>
+            </div>
+            
+            <div class="wifi-settings i-c-c gap-flex cn pd2">
+              <div class="hc pr">
+                <h4 class="sh">MQTT settings</h4>
+                <button type="button" class="help-i" data-help="mqtt.access" aria-label="Help"></button></div>
+             
+              <div class="deviceName">
+                <span title="Access token">Access token </span>
+                <input type="text" id="mqttToken" class="idB cn" name="mqttToken"  required />
+              </div>
+              <!-- <div class="deviceName">
+                <span title="Device Id">Device Id </span>
+                <input type="text" id="mqttDeviceId" class="input-div cn" name="mqttDeviceId"  required />
+              </div> -->
+              <div>
+                <input type="button" id="submitMQTTAccess" class="cn button" value="Save" onclick="saveMQTTSettings()"/>
+              </div>
+            </div>
+
+          </div>
+       
+          
+        </div>
+
+        <div id="popup" style="
+                    display: none;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    padding: 15px;
+                    background-color: #000;
+                    z-index: 9999;
+                    border: 2px solid black; 
+                    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); 
+                    color: white; 
+                    width: 250px; 
+
+                    
+                  ">
+          <span id="popupText">asdfsadf</span>
+        </div>
+      </main>
+    </div>
+  </div>
+  <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchWT("/dn.htm").then((response) => {
+                // Get the custom header value
+                const v = response.headers.get("switchName");
+                if (v) {
+                  // Set the custom header value to the div
+                  var e = _qs("#switchNameText");
+                  if (e) {
+                    e.innerText = v;
+                  }
+                }
+              });
+      const radioElement = document.getElementsByName("cloud-sync");
+      for (const radio of radioElement) {
+        radio.addEventListener("click", (event) => {
+          if (event.target.value === "1") {
+            el("mqttToken").disabled = false;
+            // el("mqttDeviceId").disabled = false;
+          } else {
+            el("mqttToken").disabled = true;
+            // el("mqttDeviceId").disabled = true;
+          }
+        });
+      }
+
+      showCloudSyncDetails();
+    });
+    
+    function showCloudSyncDetails() {
+
+      fetchWT('/api/getCloudSyncSettings')
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('There is a problem with cloud sync details fetch operation: ' + response.statusText);
+              }
+              return response.json();
+          })
+          .then(function (result) {
+            console.log(result);
+            _qs(`.cloud-sync[value="${result.syncEnabled}"]`
+              ).checked = true;
+            if (result.syncEnabled === "1") {
+                el("mqttToken").disabled = false;
+                // el("mqttDeviceId").disabled = false;
+              } else {
+                el("mqttToken").disabled = true;
+                // el("mqttDeviceId").disabled = true;
+              } 
+          })
+          .catch(error => {
+              console.error( error);
+          });
+    }
+    function saveMQTTSettings() {
+
+      let selectedRadio = _qs(`.cloud-sync:checked`);
+      var syncEnabled = selectedRadio ? (selectedRadio.value=="1"? true:false ): false;
+      var data;
+      if (syncEnabled){
+        var tokenObj = el("mqttToken");
+        // var deviceIdObj = el("mqttDeviceId");
+        var token=tokenObj.value.trim()
+        // var deviceId = deviceIdObj.value.trim();
+        var deviceId = "sample-device";
+        if (token.length < 10 || deviceId.length < 10) {
+          alert("Please enter valid access token and device id");
+          tokenObj.focus();
+          return false;
+        }
+        data = JSON.stringify({syncEnabled:"1", mqttToken: token, deviceId: deviceId});
+      } else {
+        data = JSON.stringify({ syncEnabled: "0"});
+      }
+      
+
+      fetchWT("/api/setCloudSync", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+        })
+        .then((response) => {
+          if (!response.ok) {
+            return response.text().then((errorMessage) => {
+              throw new Error(errorMessage);
+            });
+          }
+          return response.text();
+        })
+        .then((result) => {
+          displaySuccess(result);
+        })
+        .catch((error) => {
+        console.error(error.message);
+        displayFailure("Error saving MQTT settings... Please try again.");
+      });
+    }
+
+  </script>
+</body>
+
+</html>

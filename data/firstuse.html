@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css?##VERSION##" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script src="scripts/common.js?##VERSION##" defer></script>
+  <script src="scripts/help.js?##VERSION##" defer></script>
+  <script src="scripts/validation.js?##VERSION##" defer></script>
+  <title>Swigo Super Smart</title>
+  <style>
+    body { background: #fff; }
+    .setup-wrapper {
+      /* max-width: 700px;
+      margin: 0 auto; */
+      padding: 1.5rem 0.5rem;
+    }
+    .setup-card {
+      width: 100%;
+    }
+    .setup-body {
+      padding: 0;
+    }
+    .setup-sections {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .setup-section {
+      background: #FAFAFA;
+      border: 1px solid rgba(0, 66, 37, 0.18);
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      padding: 14px 16px;
+    }
+    @media (min-width: 550px) {
+      .setup-sections {
+        flex-direction: row;
+        gap: 14px;
+      }
+      .setup-section { flex: 1; }
+    }
+    .setup-section-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #333;
+      margin: 0 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .setup-section-title svg { width: 16px; height: 16px; fill: #555; }
+    .setup-section-title .optional-badge {
+      font-size: 0.65rem;
+      color: #d32f2f;
+      font-weight: 500;
+      margin-left: auto;
+    }
+    .setup-field {
+      margin-bottom: 14px;
+    }
+    .setup-field label {
+      font-size: 0.78rem;
+      color: #666;
+      font-weight: 500;
+      display: block;
+      margin-bottom: 4px;
+    }
+    .setup-field .field-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .setup-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .setup-input:focus { border-color: #2e7d32; }
+    .setup-input-pin {
+      width: 140px;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      background: #fff;
+      outline: none;
+    }
+    .setup-input-pin:focus { border-color: #2e7d32; }
+    select.setup-input {
+      appearance: auto;
+      min-height: 36px;
+    }
+    .setup-eye {
+      cursor: pointer;
+      color: #999;
+      display: flex;
+      align-items: center;
+    }
+    .setup-eye svg { width: 20px; height: 20px; }
+    .scan-link {
+      font-size: 0.82rem;
+      color: #2e7d32;
+      text-decoration: underline;
+      cursor: pointer;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    .setup-submit-btn {
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      margin-top: 20px;
+      background: #2e3b2e;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+       
+    }
+    .setup-submit-btn:hover { background: #3a4d3a; }
+    .setup-skip-text {
+      text-align: center;
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 10px;
+    }
+    .setup-info {
+      margin-left: auto;
+      position: relative;
+    }
+    /* The icon sits in the flex title row, so keep it in normal flow rather
+       than absolutely positioned - .setup-info has no other content. */
+    .setup-info .help-i { position: static; font-size: 0.9rem; }
+    @media (max-width: 550px) {
+      .setup-info .ht {
+        right: -10px;
+        max-width: 260px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-eye" viewBox="0 0 576 512">
+      <path
+        d="M288 0C128.94 0 3.85 114.61.3 266.34c-.8 32.34 11.94 63.22 36.02 87.29 10.1 10.09 20.68 19.2 31.87 27.5 62.94 44.48 143.53 68.87 219.82 68.87 144.1 0 269.5-114.6 273-266.34C575.7 82.65 463.96 0 288 0zM287.6 368c-52.76 0-95.96-43.23-95.96-96s43.2-96 95.96-96c52.77 0 95.98 43.22 95.98 96S340.37 368 287.6 368zm0-160a63.73 63.73 0 0 0-63.71 63.7 63.7 63.7 0 0 0 127.41 0A63.73 63.73 0 0 0 287.6 208z" />
+    </symbol>
+  </svg>
+
+  <div class="main-container">
+    <header class="nav-bar">
+      <div id="header-brand-bar">
+        <a href="/" style="float:left;">
+          <img src="images/logo.png" class="logo" />
+        </a>
+        <br clear="all" />
+      </div>
+      <div class="v9-header-row" style="display:flex; align-items:center; width:100%;">
+        <h2 class="wpg-heading" style="display: block;" id="switchNameText">SuperSmart</h2>
+      </div>
+    </header>
+
+    <div class="page">
+  <div class="setup-wrapper">
+    <div class="setup-card">
+      <p style="font-size: 0.82rem; color: #888; margin: 6px 0 10px; padding: 0 2px;">Let's get your SwiGO device personalized and connected.</p>
+
+      <div class="setup-body">
+        <div class="setup-sections">
+          <!-- Device Settings -->
+          <div class="setup-section">
+            <div class="setup-section-title">
+              <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1115.6 12 3.611 3.611 0 0112 15.6z"/></svg>
+              Device Settings
+              <div class="setup-info">
+                <button type="button" class="help-i" data-help="firstuse.device" aria-label="Help"></button></div>
+            </div>
+            <div class="setup-field">
+              <label for="deviceName">Device Name</label>
+              <input type="text" id="deviceName" class="setup-input" name="deviceName"
+                maxlength="20" minlength="4" value="SwiGOss" required autofocus
+                title="Any specific name to this SwiGO Switch. eg., Sump-motor, Geiser-2. Use alphabets, numbers and special characters Hiphen(-)/Underscore(_)/Hash(#)/At(@) only, No Space allowed, Max 20 characters" />
+            </div>
+            <div class="setup-field">
+              <label for="devicePin">Security PIN</label>
+              <div class="field-row">
+                <input type="password" id="devicePin" class="setup-input-pin" name="devicePin"
+                  title="Any 4 digit number" maxlength="4" minlength="4" required />
+                <span class="setup-eye" onclick="viewPassword('devicePin')">
+                  <svg viewBox="0 0 576 512"><use href="#icon-eye"></use></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- WiFi Settings -->
+          <div class="setup-section">
+            <div class="setup-section-title">
+              <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3a4.237 4.237 0 00-6 0zm-4-4l2 2a7.074 7.074 0 0110 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+              WiFi Network
+              <span class="optional-badge">Optional</span>
+              <a id="scanNetworksBtn" href="javascript:scanNetworks()" class="scan-link">Scan</a>
+              <div class="setup-info">
+                <button type="button" class="help-i" data-help="firstuse.wifi" aria-label="Help"></button>
+              </div>
+            </div>
+            <div class="setup-field">
+              <select id="wifiNetwork" class="setup-input" onchange="handleWiFiNetworkChange()">
+                <option value="">Scanning networks...</option>
+              </select>
+            </div>
+            <div id="customWiFiDiv" style="display: none;">
+              <div class="setup-field">
+                <label for="customWiFiSSID">Network Name</label>
+                <input type="text" id="customWiFiSSID" class="setup-input" name="customWiFiSSID" maxlength="20" placeholder="Enter WiFi network name" />
+              </div>
+            </div>
+            <div id="wifiPasswordDiv" style="display: none;">
+              <div class="setup-field">
+                <label for="wifiPassword">Password</label>
+                <div class="field-row">
+                  <input type="password" id="wifiPassword" class="setup-input" name="wifiPassword" maxlength="20" placeholder="Enter WiFi password" />
+                  <span class="setup-eye" onclick="viewPassword('wifiPassword')">
+                    <svg viewBox="0 0 576 512"><use href="#icon-eye"></use></svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <input type="button" id="submit" class="setup-submit-btn" value="Complete Setup ›" onclick="saveFirstUse()" />
+        <p class="setup-skip-text">You can skip WiFi setup and configure it later in settings.</p>
+      </div>
+    </div>
+  </div>
+    </div>
+  </div>
+
+  <div id="popup" style="
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px;
+    background-color: #000;
+    z-index: 9999;
+    border: 2px solid black;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    color: white;
+    width: 250px;
+  ">
+    <span id="popupText"></span>
+  </div>
+
+  <script>
+    // Help tooltips are handled by the shared renderer in scripts/help.js.
+
+    const inputBox = document.getElementById('deviceName');
+    document.getElementById("devicePin").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById("submit").click();
+      }
+    });
+    window.onload = () => {
+      inputBox.focus();
+      inputBox.select();
+      scanNetworks();
+    };
+
+    async function saveFirstUse() {
+      var nameObj = document.getElementById("deviceName");
+      var passObj = document.getElementById("devicePin");
+      if (!validateDeviceName(nameObj)) return;
+      if (!validateDevicePin(passObj)) return;
+
+      var name = nameObj.value.trim();
+      var pass = passObj.value.trim();
+      const timezoneOffset = -new Date().getTimezoneOffset();
+
+      const networkSelect = document.getElementById("wifiNetwork");
+      const customWiFiSSID = document.getElementById("customWiFiSSID");
+      const customWiFiDiv = document.getElementById("customWiFiDiv");
+      const wifiPassword = document.getElementById("wifiPassword");
+
+      let ssid = "";
+      let wifiPass = "";
+
+      const isCustomWiFiVisible = customWiFiDiv && customWiFiDiv.style.display !== "none";
+      if (isCustomWiFiVisible && customWiFiSSID && customWiFiSSID.value.trim()) {
+        ssid = customWiFiSSID.value.trim();
+        wifiPass = wifiPassword ? wifiPassword.value.trim() : "";
+      } else if (networkSelect && networkSelect.value === "__OTHER__") {
+        ssid = customWiFiSSID ? customWiFiSSID.value.trim() : "";
+        wifiPass = wifiPassword ? wifiPassword.value.trim() : "";
+      } else if (networkSelect && networkSelect.value !== "") {
+        ssid = networkSelect.value;
+        wifiPass = wifiPassword ? wifiPassword.value.trim() : "";
+      }
+
+      if (ssid) {
+        if (ssid.length > 20) {
+          displayFailure("WiFi SSID must be 20 characters or less.");
+          return;
+        }
+        if (wifiPass.length > 20) {
+          displayFailure("WiFi password must be 20 characters or less.");
+          return;
+        }
+      }
+
+      try {
+        const requestData = {
+          deviceName: name,
+          devicePin: pass,
+          timezoneOffset: timezoneOffset
+        };
+
+        if (ssid) {
+          requestData.wifiSSID = ssid;
+          requestData.wifiPassword = wifiPass || "";
+        }
+
+        const response = await fetchWT("/api/firstUseSetup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+          const errorMessage = await response.text();
+          throw new Error(errorMessage);
+        }
+
+        const ulTag = _ce("ul");
+        var liTag = _ce("li");
+        liTag.textContent = "Device name and pin are saved.";
+        ulTag.appendChild(liTag);
+
+        if (ssid) {
+          liTag = _ce("li");
+          liTag.textContent = "WiFi settings have been saved.";
+          ulTag.appendChild(liTag);
+        }
+
+        const isNameChanged = name.toLowerCase() !== "swigoss";
+        if (isNameChanged) {
+          liTag = _ce("li");
+          liTag.textContent = "You need to connect to a new Wifi access point (" + name + "_AP" + ") and access the device with new URL(" + name + ".local" + ").";
+          ulTag.appendChild(liTag);
+        }
+
+        liTag = _ce("li");
+        liTag.textContent = isNameChanged ? "Connect to new AP now and after that Click the link below to refresh." : "Click the link below to refresh.";
+        const link = _ce("a");
+        link.textContent = "Refresh Page";
+        link.style.color = "cyan";
+        link.href = "#";
+        link.addEventListener("click", () => {
+          window.location.href = "http://" + name + ".local";
+        });
+        liTag.appendChild(_ce("br"));
+        liTag.appendChild(link);
+        ulTag.appendChild(liTag);
+
+        document.getElementById("popupText").innerHTML = "";
+        document.getElementById("popupText").appendChild(ulTag);
+        document.getElementById("popup").style.display = "block";
+      } catch (error) {
+        console.error(error.message);
+        displayFailure("Error saving device settings. Please try again.");
+      }
+    }
+  </script>
+</body>
+
+</html>

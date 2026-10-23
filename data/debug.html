@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css?##VERSION##" />
+    <script src="scripts/common.js?##VERSION##" defer></script>
+    <script src="scripts/logmessages.js?##VERSION##" defer></script>
+    <script src="scripts/debugparsing.js?##VERSION##" defer></script>
+    <title>SwiGO Super Smart</title>
+  </head>
+  <body>
+    <header class="nav-bar" >
+      <div>
+        <a href="/" style="float:left;">
+          <img src="images/logo.png" class="logo" />
+        </a>
+      </div>
+      <br clear="all" />
+      <hr style="margin: 5px 0px; border-top: 1px solid #ccc;" />
+      <a href="/" class="switch-name-link" style="float:left;">
+        <h2 class="wpg-heading" style="display: block;" id="switchNameText">SuperSmart</h2>
+      </a>
+      <!-- <div style="text-align: right; margin-top: 10px;">
+        <button onclick="loadDebugLogs()" style="background: none; border: none; cursor: pointer;">
+          <img src="images/reload.png" alt="Refresh Debug Logs" style="width: 20px; height: 20px;">
+        </button>
+      </div> -->
+    </header>
+
+    <div class="page" style="margin-top:6.5rem;">
+        <!-- <nav class="menu-bar">
+          <div class="main_menu menu-1" onclick="showContent('menu-1')">
+            <img src="home.png" alt="Menu 1" />
+          </div>
+          <div class="main_menu menu-2" onclick="showContent('menu-2')">
+            <img src="schedule.png" alt="Menu 2" />
+          </div>
+          <div class="main_menu menu-3" onclick="showContent('menu-3')">
+            <img src="power.png" alt="Menu 3" />
+          </div>
+          <div class="main_menu menu-4" onclick="showContent('menu-4')">
+            <img src="settings.png" alt="Menu 4" />
+          </div>
+        </nav> -->
+        
+        <main id="content">
+          <!-- <div class="home-container gap-flex content-div active"  id="menu-1">
+            <div class="tab-container">
+              <div class="tab" id="logs-tab" onclick="showLogs()">Logs</div>
+              <div class="tab" id="dump-tab" onclick="showDump()">Dump</div>
+            </div>
+            <div class="padding-outer" id="logs-content">
+              <div class="log-content cn"></div>
+            </div>
+            <div class="padding-outer" id="dump-content">
+              <textarea id="log-textarea" rows="10" cols="50" class="cn"></textarea>
+            </div>
+            
+          </div> -->
+          <div class="home-container gap-flex content-div active"  id="menu-1">
+            
+              <div class="log-full padding-outer">
+                <div class="log-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                  <h3 style="margin: 0;">Debug Logs</h3>
+                  <button onclick="loadDebugLogs()" style="background: none; border: none; cursor: pointer;">
+                    <img src="images/reload.png" alt="Refresh">
+                  </button>
+                </div>
+                <div id="loading-indicator" style="display: none; text-align: center; padding: 20px;">
+                  <p>Loading debug logs...</p>
+                </div>
+                <div class="log-content cn"></div>
+              </div>
+          </div>
+        </div>
+          <!-- <script>
+            function showLogs() {
+              el("logs-content").style.display = "block";
+              el("dump-content").style.display = "none";
+              el("logs-tab").classList.add("active");
+              el("dump-tab").classList.remove("active");
+            }
+            function showDump() {
+              el("logs-content").style.display = "none";
+              el("dump-content").style.display = "block";
+              el("logs-tab").classList.remove("active");
+              el("dump-tab").classList.add("active");
+            }
+          </script> -->
+
+        </main>
+        <script>
+                document.addEventListener("DOMContentLoaded", () => {
+                  fetchWT("/dn.htm").then((response) => {
+                    const v = response.headers.get("switchName");
+                    if (v) {
+                      const e = _qs("#switchNameText");
+                      if (e) {
+                        e.innerText = v;
+                        document.title = v + " - SwiGO SuperSmart";
+                      }
+                    }
+                  });
+                });
+        </script>
+        <!-- <div id="stale-message" style="display:none ;">
+          The connection to the switch is lost. Please refresh the page.
+        </div> -->
+      </div>
+    </div>
+  </body>
+</html>

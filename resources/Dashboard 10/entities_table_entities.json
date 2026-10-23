@@ -1,0 +1,312 @@
+{
+  "widget": {
+    "typeFullFqn": "system.cards.entities_table",
+    "type": "latest",
+    "sizeX": 7.5,
+    "sizeY": 6.5,
+    "config": {
+      "timewindow": {
+        "displayValue": "",
+        "selectedTab": 0,
+        "realtime": {
+          "realtimeType": 1,
+          "interval": 1000,
+          "timewindowMs": 86400000,
+          "quickInterval": "CURRENT_DAY",
+          "hideInterval": false,
+          "hideLastInterval": false,
+          "hideQuickInterval": false
+        },
+        "history": {
+          "historyType": 0,
+          "interval": 1000,
+          "timewindowMs": 60000,
+          "fixedTimewindow": {
+            "startTimeMs": 1771492994343,
+            "endTimeMs": 1771579394343
+          },
+          "quickInterval": "CURRENT_DAY",
+          "hideInterval": false,
+          "hideLastInterval": false,
+          "hideFixedInterval": false,
+          "hideQuickInterval": false
+        },
+        "aggregation": {
+          "type": "NONE",
+          "limit": 200
+        }
+      },
+      "showTitle": true,
+      "backgroundColor": "#fff",
+      "color": "#333333",
+      "padding": "20px",
+      "settings": {
+        "entitiesTitle": "",
+        "enableSearch": true,
+        "enableSelectColumnDisplay": true,
+        "enableStickyHeader": false,
+        "enableStickyAction": true,
+        "showCellActionsMenu": true,
+        "reserveSpaceForHiddenAction": "true",
+        "displayEntityName": false,
+        "displayEntityLabel": false,
+        "displayEntityType": false,
+        "displayPagination": true,
+        "defaultPageSize": 20,
+        "defaultSortOrder": "name",
+        "useRowStyleFunction": false,
+        "rowStyleFunction": "var activeStatus = entity.active;\nvar color = '#f5f5f5';\nswitch (activeStatus) {\n  case 'true':\n    color='#fff'; \n    break;\n  case 'false':\n    color = '#f5f5f5';\n    break;\n}\nreturn {\n  backgroundColor: color\n};\n"
+      },
+      "title": "Devices",
+      "dropShadow": true,
+      "enableFullscreen": true,
+      "titleStyle": {
+        "fontSize": "16px",
+        "fontWeight": 500,
+        "padding": "5px 10px 5px 10px",
+        "color": "#333333"
+      },
+      "useDashboardTimewindow": false,
+      "showLegend": false,
+      "datasources": [
+        {
+          "type": "entity",
+          "name": "",
+          "entityAliasId": "011b5044-931d-849b-4892-6c3a7951a9a5",
+          "filterId": null,
+          "dataKeys": [
+            {
+              "name": "active",
+              "type": "attribute",
+              "label": "Active",
+              "color": "#8bc34a",
+              "settings": {
+                "columnWidth": "0px",
+                "useCellContentFunction": true,
+                "cellContentFunction": "var color;\nvar active = value;\nif (active == 'true') {\n  color = '#27AE60';\n} else {\n  color = '#bbb';\n}\nreturn '<span style=\"font-size: 18px; color: ' + color + '\">&#11044;</span>';\n",
+                "defaultColumnVisibility": "visible",
+                "columnSelectionToDisplay": "enabled"
+              },
+              "_hash": 0.722
+            },
+            {
+              "name": "label",
+              "type": "entityField",
+              "label": "label",
+              "color": "#e91e63",
+              "settings": {
+                "customTitle": "",
+                "columnWidth": "0px",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": "",
+                "useCellContentFunction": false,
+                "cellContentFunction": "",
+                "defaultColumnVisibility": "hidden",
+                "columnSelectionToDisplay": "enabled",
+                "disableSorting": false
+              },
+              "_hash": 0.4962653579566496,
+              "aggregationType": null,
+              "units": null,
+              "decimals": null,
+              "funcBody": null,
+              "usePostProcessing": null,
+              "postFuncBody": null
+            },
+            {
+              "name": "deviceName",
+              "type": "attribute",
+              "label": "Name",
+              "color": "#e91e63",
+              "settings": {
+                "customTitle": "",
+                "columnWidth": "0px",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": "",
+                "useCellContentFunction": true,
+                "cellContentFunction": "var deviceName = value;\n\n// This works when 'label' entity field is added to datasource\nvar fallback = ctx.datasources[0] ? entity.label : null;\n\nreturn (deviceName && deviceName !== '') \n    ? deviceName \n    : entity.label",
+                "defaultColumnVisibility": "visible",
+                "columnSelectionToDisplay": "enabled",
+                "disableSorting": false
+              },
+              "_hash": 0.6604703310754653,
+              "aggregationType": null,
+              "units": null,
+              "decimals": null,
+              "funcBody": null,
+              "usePostProcessing": null,
+              "postFuncBody": null
+            },
+            {
+              "name": "ownerName",
+              "type": "entityField",
+              "label": "Owner name",
+              "color": "#3f51b5",
+              "settings": {},
+              "_hash": 0.9413071244099912
+            },
+            {
+              "name": "relayStatus",
+              "type": "timeseries",
+              "label": "ON - OFF",
+              "color": "#9c27b0",
+              "settings": {
+                "columnWidth": "0px",
+                "useCellContentFunction": true,
+                "cellContentFunction": "var active = value;\nif (active == 'true') {\n  return '<span style=\"font-size: 14px; color:#FF0000\"><b>ON</b></span>';\n} else {\n  return '<span style=\"font-size: 14px; \">OFF</span>';\n}\n",
+                "defaultColumnVisibility": "visible",
+                "columnSelectionToDisplay": "enabled"
+              },
+              "_hash": 0.775,
+              "decimals": 0,
+              "aggregationType": "NONE"
+            },
+            {
+              "name": "voltage",
+              "type": "timeseries",
+              "label": "Voltage",
+              "color": "#607d8b",
+              "settings": {},
+              "_hash": 0.547,
+              "aggregationType": "NONE"
+            },
+            {
+              "name": "current",
+              "type": "timeseries",
+              "label": "Current",
+              "color": "#9c27b0",
+              "settings": {},
+              "_hash": 0.287,
+              "aggregationType": "NONE"
+            },
+            {
+              "name": "cumEnergy",
+              "type": "timeseries",
+              "label": "Cum. Energy",
+              "color": "#8bc34a",
+              "settings": {},
+              "_hash": 0.162,
+              "aggregationType": "NONE"
+            },
+            {
+              "name": "lastActivityTime",
+              "type": "attribute",
+              "label": "Last Activity",
+              "color": "#3f51b5",
+              "settings": {},
+              "_hash": 0.238,
+              "usePostProcessing": true,
+              "postFuncBody": "if (value) {\n  return moment(value).format(\"DD/MM/YYYY HH:mm:ss\");\n}\nreturn '';"
+            },
+            {
+              "name": "Mac_id",
+              "type": "attribute",
+              "label": "Mac_id",
+              "color": "#ffeb3b",
+              "settings": {},
+              "_hash": 0.26279754066776506
+            },
+            {
+              "name": "firmwareVersion",
+              "type": "attribute",
+              "label": "firmwareVersion",
+              "color": "#03a9f4",
+              "settings": {},
+              "_hash": 0.28080387201902424
+            }
+          ],
+          "alarmFilterConfig": {
+            "statusList": [
+              "ACTIVE"
+            ]
+          }
+        }
+      ],
+      "displayTimewindow": false,
+      "configMode": "advanced",
+      "actions": {
+        "rowClick": [
+          {
+            "name": "device_row_click",
+            "icon": "arrow_forward",
+            "type": "custom",
+            "targetDashboardStateId": "device_home",
+            "setEntityId": true,
+            "stateEntityParamName": "device_id",
+            "openRightLayout": false,
+            "openInSeparateDialog": false,
+            "openInPopover": false,
+            "customFunction": "// rowClick — modifier-key aware navigation.\n// $event has the original mouse event so we can detect Shift / Ctrl / Cmd.\ntry {\n    var devId   = (entityId && entityId.id)   ? entityId.id   : entityId;\n    var devType = (entityId && entityId.entityType) ? entityId.entityType : 'DEVICE';\n    var stateParams = {\n        device_id: { entityId: { entityType: devType, id: devId }, entityName: entityName }\n    };\n\n    var sc = widgetContext.stateController;\n    var newTab = $event && ($event.shiftKey || $event.ctrlKey || $event.metaKey || $event.button === 1);\n\n    if (newTab) {\n        // Build a URL to the same dashboard with the device state pushed on top\n        // of whatever state is currently encoded in the URL. The original tab\n        // is left untouched, so its search box stays filled in.\n        try {\n            var url = new URL(window.location.href);\n            var existing = [];\n            var st = url.searchParams.get('state');\n            if (st) {\n                try { existing = JSON.parse(decodeURIComponent(escape(atob(st)))); }\n                catch (_) { existing = []; }\n                if (!Array.isArray(existing)) existing = [];\n            }\n            existing.push({ id: 'device_home', params: stateParams });\n            var encoded = btoa(unescape(encodeURIComponent(JSON.stringify(existing))));\n            url.searchParams.set('state', encoded);\n            window.open(url.toString(), '_blank', 'noopener');\n            if ($event && $event.preventDefault) $event.preventDefault();\n            if ($event && $event.stopPropagation) $event.stopPropagation();\n            return;\n        } catch (e) {\n            console.error('[Devices rowClick] new-tab build failed, falling back', e);\n            // Fall through to same-tab navigation if URL construction failed.\n        }\n    }\n\n    if (sc && typeof sc.openState === 'function') {\n        sc.openState('device_home', stateParams);\n    } else {\n        console.error('[Devices rowClick] stateController.openState unavailable');\n    }\n} catch (e) {\n    console.error('[Devices rowClick] error', e);\n}\n"
+          }
+        ],
+        "actionCellButton": [],
+        "headerButton": [
+          {
+            "name": "Export",
+            "buttonType": "icon",
+            "icon": "download",
+            "buttonColor": "#333333",
+            "useShowWidgetActionFunction": null,
+            "showWidgetActionFunction": "return true;",
+            "type": "custom",
+            "customFunction": "// Access widget context\nvar data = widgetContext.data; // Timeseries data\nvar timeWindow = widgetContext.timeWindow; // Time window for start/end time\nvar http = widgetContext.http;\n\nfunction formatLocalDate(timestamp) {\n    var date = new Date(timestamp);\n    var year = date.getFullYear();\n    var month = String(date.getMonth() + 1).padStart(2, '0');\n    var day = String(date.getDate()).padStart(2, '0');\n    var hours = String(date.getHours()).padStart(2, '0');\n    var minutes = String(date.getMinutes()).padStart(2, '0');\n    var seconds = String(date.getSeconds()).padStart(2, '0');\n    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;\n}\n\n// Collect unique entities with their IDs\nvar macIds = [];\nvar entityInfo = {};\ndata.forEach(function(ds) {\n    var eName = ds.datasource.entityName;\n    if (!entityInfo[eName]) {\n        macIds.push(eName);\n        entityInfo[eName] = {\n            entityId: ds.datasource.entityId,\n            entityLabel: ds.datasource.entityLabel || eName,\n            deviceName: null\n        };\n    }\n});\n\nvar startTime = new Date(timeWindow.minTime).toISOString();\nvar endTime = new Date(timeWindow.maxTime).toISOString();\n\n// Fetch deviceName client attribute for each entity, then generate CSV\nvar pending = macIds.length;\n\nfunction onAllResolved() {\n    var csvContent = \"data:text/csv;charset=utf-8,\";\n\n    // Build deviceNameMap: deviceName attribute -> entityLabel -> entityName\n    var deviceNameMap = {};\n    macIds.forEach(function(eName) {\n        var info = entityInfo[eName];\n        deviceNameMap[eName] = info.deviceName || info.entityLabel || eName;\n    });\n\n    var deviceNames = macIds.map(function(m) { return deviceNameMap[m]; });\n\n    // Add metadata\n    csvContent += \"Device(s),\" + deviceNames.join(\"; \") + \"\\n\";\n    csvContent += \"Mac ID(s),\" + macIds.join(\"; \") + \"\\n\";\n    csvContent += \"Start Time,\" + startTime + \"\\n\";\n    csvContent += \"End Time,\" + endTime + \"\\n\";\n    csvContent += \"\\n\";\n\n    // Create CSV headers\n    var headers = [\"Timestamp\"];\n    data.forEach(function(ds) {\n        var displayName = deviceNameMap[ds.datasource.entityName] || ds.datasource.entityName;\n        headers.push(displayName + \" - \" + ds.dataKey.label);\n    });\n    csvContent += headers.join(\",\") + \"\\n\";\n\n    // Process timeseries data\n    var rows = {};\n    data.forEach(function(ds) {\n        var displayName = deviceNameMap[ds.datasource.entityName] || ds.datasource.entityName;\n        ds.data.forEach(function(point) {\n            var timestamp = point[0];\n            var value = point[1];\n            if (!rows[timestamp]) {\n                rows[timestamp] = { timestamp: formatLocalDate(timestamp), values: {} };\n            }\n            rows[timestamp].values[displayName + \" - \" + ds.dataKey.label] = value;\n        });\n    });\n\n    // Convert rows to CSV\n    Object.keys(rows).forEach(function(timestamp) {\n        var row = [rows[timestamp].timestamp];\n        headers.slice(1).forEach(function(header) {\n            row.push(rows[timestamp].values[header] || \"\");\n        });\n        csvContent += row.join(\",\") + \"\\n\";\n    });\n\n    // Trigger CSV download\n    var encodedUri = encodeURI(csvContent);\n    var link = document.createElement(\"a\");\n    link.setAttribute(\"href\", encodedUri);\n    link.setAttribute(\"download\", deviceNames.join(\"; \") + \"_current_voltage_\" + startTime.split(\" \")[0] + \"_\" + endTime.split(\" \")[0] + \".csv\");\n    document.body.appendChild(link);\n    link.click();\n    document.body.removeChild(link);\n}\n\n// Fetch deviceName attribute for each device via API\nmacIds.forEach(function(eName) {\n    var info = entityInfo[eName];\n    var url = '/api/plugins/telemetry/DEVICE/' + info.entityId + '/values/attributes/CLIENT_SCOPE?keys=deviceName';\n    http.get(url).subscribe(\n        function(response) {\n            if (response && response.length > 0) {\n                response.forEach(function(attr) {\n                    if (attr.key === 'deviceName' && attr.value) {\n                        info.deviceName = attr.value;\n                    }\n                });\n            }\n            pending--;\n            if (pending === 0) onAllResolved();\n        },\n        function(error) {\n            pending--;\n            if (pending === 0) onAllResolved();\n        }\n    );\n});\n",
+            "openInSeparateDialog": false,
+            "openInPopover": false,
+            "id": "457f2e57-e81e-ac5e-ae8e-82fc62c54569"
+          },
+          {
+            "name": "Download CSV",
+            "buttonType": "icon",
+            "icon": "file_download",
+            "buttonColor": "#333333",
+            "useShowWidgetActionFunction": null,
+            "showWidgetActionFunction": "return true;",
+            "type": "custom",
+            "customFunction": "// Download the current device-list table as CSV (one row per device).\nvar data = widgetContext.data || [];\n\nfunction csvEscape(v) {\n    if (v === null || v === undefined) v = '';\n    v = String(v);\n    if (/[\",\\n]/.test(v)) {\n        v = '\"' + v.replace(/\"/g, '\"\"') + '\"';\n    }\n    return v;\n}\n\nfunction fmt(label, value) {\n    if (value === null || value === undefined || value === '') return '';\n    var l = String(label).toLowerCase();\n    if (l === 'active') {\n        return (String(value) === 'true') ? 'Online' : 'Offline';\n    }\n    if (l === 'on - off') {\n        return (String(value) === 'true') ? 'ON' : 'OFF';\n    }\n    if (l === 'last activity') {\n        var n = Number(value);\n        if (!isNaN(n) && n > 0) {\n            return moment(n).format('DD/MM/YYYY HH:mm:ss');\n        }\n    }\n    return value;\n}\n\nvar headers = [];\nvar seen = {};\nvar entities = {};\nvar order = [];\n\ndata.forEach(function(ds) {\n    var label = ds.dataKey.label;\n    if (!seen[label]) { seen[label] = true; headers.push(label); }\n    var eName = ds.datasource.entityName;\n    if (!entities[eName]) { entities[eName] = {}; order.push(eName); }\n    var v = '';\n    if (ds.data && ds.data.length) { v = ds.data[ds.data.length - 1][1]; }\n    entities[eName][label] = v;\n});\n\nif (!order.length) {\n    return;\n}\n\nvar lines = [];\nlines.push(headers.map(csvEscape).join(','));\n\norder.forEach(function(eName) {\n    var row = entities[eName];\n    var cells = headers.map(function(h) {\n        return csvEscape(fmt(h, row[h]));\n    });\n    lines.push(cells.join(','));\n});\n\nvar csv = lines.join('\\n');\nvar blob = new Blob([\"﻿\" + csv], { type: 'text/csv;charset=utf-8;' });\nvar url = URL.createObjectURL(blob);\nvar link = document.createElement('a');\nlink.setAttribute('href', url);\nvar ts = moment().format('YYYY-MM-DD_HH-mm');\nlink.setAttribute('download', 'device_list_' + ts + '.csv');\ndocument.body.appendChild(link);\nlink.click();\ndocument.body.removeChild(link);\nURL.revokeObjectURL(url);\n",
+            "openInSeparateDialog": false,
+            "openInPopover": false,
+            "id": "a1c4f9d2-7b3e-4c6a-9f01-2d8e5b7a3c44"
+          }
+        ]
+      },
+      "showTitleIcon": true,
+      "titleIcon": "list",
+      "enableDataExport": true,
+      "widgetStyle": {},
+      "widgetCss": "",
+      "pageSize": 1024,
+      "noDataDisplayMessage": "",
+      "iconColor": "rgba(0, 0, 0, 0.87)",
+      "iconSize": "24px",
+      "titleTooltip": ""
+    },
+    "row": 0,
+    "col": 0,
+    "id": "14ce5beb-a0c1-4e81-eb32-da69ea9761d8"
+  },
+  "aliasesInfo": {
+    "datasourceAliases": {
+      "0": {
+        "alias": "All SSS devices",
+        "filter": {
+          "type": "deviceType",
+          "resolveMultiple": true,
+          "deviceTypes": [
+            "SuperSmart"
+          ],
+          "deviceNameFilter": ""
+        }
+      }
+    },
+    "targetDeviceAlias": null
+  },
+  "filtersInfo": {
+    "datasourceFilters": {}
+  },
+  "originalSize": {
+    "sizeX": 24,
+    "sizeY": 12,
+    "resizable": true
+  },
+  "originalColumns": 24
+}

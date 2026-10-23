@@ -1,0 +1,55 @@
+
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    font-size:  0.85rem;
+}
+.timer-config {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    
+}
+.timer-config label {
+    width: 80px;
+}
+.timer-config input {
+
+
+    font-size: 0.85rem;
+   
+}
+.timer-config select {
+ 
+    font-size: 0.85rem;
+    height: 1.5rem;
+  border: 0.0625rem solid #bbb;
+  border-radius: 0.2rem;
+  padding-left: 3px;
+}
+.radio-group {
+    margin: 20px 0;
+}
+.radio-option {
+    display: block; /* Changed from inline to block for vertical stacking */
+    margin-bottom: 10px; /* Added spacing between options */
+}
+.submit-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+.submit-btn:hover {
+    background-color: #45a049;
+}
+.error {
+    color: rgb(210, 30, 30);
+    margin-top: 10px;
+    display: none;
+}

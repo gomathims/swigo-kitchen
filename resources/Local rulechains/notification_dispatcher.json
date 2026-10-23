@@ -1,0 +1,198 @@
+{
+  "ruleChain": {
+    "name": "Notification dispatcher",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "additionalInfo": {
+      "description": "Sub rule chain to send notifications"
+    }
+  },
+  "metadata": {
+    "version": 46,
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Add alertPreferences",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1780659583903
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 1,
+        "configuration": {
+          "tellFailureIfAbsent": false,
+          "fetchTo": "METADATA",
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "alertPreferences",
+            "cs_alertPreferences",
+            "ss_alertPreferences"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        },
+        "additionalInfo": {
+          "description": "Add customer notification preferences ",
+          "layoutX": 220,
+          "layoutY": 247
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "channel switch",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1780723683944
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "TBEL",
+          "jsScript": "function nextRelation(metadata, msg) {\n    return ['one','nine'];\n}\nif(msgType === 'POST_TELEMETRY_REQUEST') {\n    return ['two'];\n}\nreturn nextRelation(metadata, msg);",
+          "tbelScript": "var out = [];\nif (metadata.channels != null && metadata.channels.length() > 0) {\n    var parts = metadata.channels.split(\",\");\n    for (var i = 0; i < parts.length; i++) {\n        out.add(parts[i]);\n    }\n}\nreturn out;"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 569,
+          "layoutY": 275
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.notification.TbNotificationNode",
+        "name": "email sending",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1778828006350
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "templateId": {
+            "entityType": "NOTIFICATION_TEMPLATE",
+            "id": "592a9190-4f86-11f1-bbcc-37490676bf9f"
+          },
+          "targets": [
+            "54821c50-4f7f-11f1-bbcc-37490676bf9f"
+          ]
+        },
+        "additionalInfo": {
+          "description": "sending email",
+          "layoutX": 902,
+          "layoutY": 309
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.notification.TbNotificationNode",
+        "name": "sending push notification",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1780723642379
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "templateId": {
+            "entityType": "NOTIFICATION_TEMPLATE",
+            "id": "74921a20-4f86-11f1-bbcc-37490676bf9f"
+          },
+          "targets": [
+            "6e27a3a0-2ee7-11f0-8583-c707adfff297"
+          ]
+        },
+        "additionalInfo": {
+          "description": "sending push notification",
+          "layoutX": 901,
+          "layoutY": 203
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "test transformation script",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1780659583903
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "TBEL",
+          "jsScript": "return {msg: msg, metadata: metadata, msgType: msgType};",
+          "tbelScript": "\nvar prefsStr = metadata.ss_alertPreferences;\nvar prefs = prefsStr != null ? JSON.parse(prefsStr) : {\"categories\": {}};\n\nvar c = prefs.categories != null ? prefs.categories[msg.category] : null;\n\nif (c == null || c.enabled != true || c.channels == null || c.channels.size() == 0) {\n    return {msg: msg, metadata: metadata, msgType: msg.msgType};\n}\n\nmetadata.channels = String.join(\",\", c.channels);\nreturn {msg: msg, metadata: metadata, msgType: msg.msgType};\n"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 723,
+          "layoutY": 75
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.metadata.TbGetCustomerAttributeNode",
+        "name": "find alert pref from customer",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1780659583903
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 1,
+        "configuration": {
+          "dataToFetch": "ATTRIBUTES",
+          "dataMapping": {
+            "alarmThreshold": "threshold",
+            "alertPreferences": "ss_alertPreferences"
+          },
+          "fetchTo": "METADATA"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 385,
+          "layoutY": 56
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "email"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 3,
+        "type": "push"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 4,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

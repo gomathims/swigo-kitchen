@@ -1,0 +1,109 @@
+type: vertical-stack
+cards:
+  - type: conditional
+    conditions:
+      - entity: sensor.supersmart3_relaystatus
+        state: "OFF"
+    card:
+      type: entities
+      entities:
+        - entity: input_number.duration_hours
+          name: Duration in Hours
+        - entity: input_number.duration_minutes
+          name: Duration in Minutes
+        - type: button
+          name: Turn On
+          tap_action:
+            action: call-service
+            service: script.turn_on_with_duration
+  - type: conditional
+    conditions:
+      - entity: sensor.supersmart3_relaystatus
+        state: "OFF"
+    card:
+      type: horizontal-stack
+      cards:
+        - type: button
+          show_name: true
+          show_icon: true
+          name: 15 Mins
+          icon: mdi:timer-outline
+          tap_action:
+            action: call-service
+            service: mqtt.publish
+            service_data:
+              topic: homeassistant/switch/supersmart3/set
+              payload: "{\"method\":\"turnOn\", \"durationHours\":0, \"durationMinutes\":15 }"
+              qos: 0
+          show_state: true
+          icon_height: 20px
+        - type: button
+          show_name: true
+          show_icon: true
+          name: 30 Mins
+          icon: mdi:timer-outline
+          tap_action:
+            action: call-service
+            service: mqtt.publish
+            service_data:
+              topic: homeassistant/switch/supersmart3/set
+              payload: "{\"method\":\"turnOn\", \"durationHours\":0, \"durationMinutes\":30 }"
+              qos: 0
+          show_state: true
+          icon_height: 20px
+        - type: button
+          show_name: true
+          show_icon: true
+          name: 45 Mins
+          icon: mdi:timer-outline
+          tap_action:
+            action: call-service
+            service: mqtt.publish
+            service_data:
+              topic: homeassistant/switch/supersmart3/set
+              payload: "{\"method\":\"turnOn\", \"durationHours\":0, \"durationMinutes\":45 }"
+              qos: 0
+          show_state: true
+          icon_height: 20px
+        - type: button
+          show_name: true
+          show_icon: true
+          name: 1 Hour
+          icon: mdi:timer-outline
+          tap_action:
+            action: call-service
+            service: mqtt.publish
+            service_data:
+              topic: homeassistant/switch/supersmart3/set
+              payload: "{\"method\":\"turnOn\", \"durationHours\":1, \"durationMinutes\":0 }"
+              qos: 0
+          show_state: true
+          icon_height: 20px
+  - type: conditional
+    conditions:
+      - entity: sensor.supersmart3_relaystatus
+        state: "ON"
+    card:
+      show_name: true
+      show_icon: true
+      type: button
+      name: Switch Off
+      icon: mdi:timer-cancel
+      tap_action:
+        action: call-service
+        service: mqtt.publish
+        service_data:
+          topic: homeassistant/switch/supersmart3/set
+          payload: "{\"method\":\"turnOff\"}"
+          qos: 0
+      show_state: true
+      icon_height: 20px
+  - type: entities
+    title: supersmart3
+    entities:
+      - entity: sensor.supersmart3_relaystatus
+      - entity: sensor.supersmart3_current
+      - entity: sensor.supersmart3_voltage
+      - entity: sensor.supersmart3_power
+      - entity: sensor.supersmart3_energy
+      - entity: sensor.supersmart3_cumenergy

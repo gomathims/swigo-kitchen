@@ -1,0 +1,363 @@
+{
+  "ruleChain": {
+    "name": "Remote switching",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "additionalInfo": {
+      "description": ""
+    }
+  },
+  "metadata": {
+    "version": 2,
+    "firstNodeIndex": 6,
+    "nodes": [
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "transform script to RPC values",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "// Access telemetry values\nvar remoteSwitching = msg.remoteSwitching ? msg.remoteSwitching : null;\nvar buttonNo = msg.buttonNo ? msg.buttonNo : null;\n//var targetDeviceId = metadata.targetDeviceId;\n var rpcPayload;\n\nif (remoteSwitching) {\n    // Build exact RPC payload\n    rpcPayload = {\n        method: 'remoteSwitch',\n        params: {\n            remoteSwitching: remoteSwitching,\n            buttonNo: buttonNo\n        }\n    };\n\n    // Update message\n    //msg2 = rpcPayload;\n    //msgType2 = 'RPC_REQUEST';\n} else {\n    // No target/fields - log and skip RPC (continue as original)\n    // if (!targetDeviceId) {\n    //     log('No target device via Controls relation');\n    // }\n    // if (!remoteSwitching || !buttonNo) {\n    //     log('Missing remoteSwitching or buttonNo');\n    // }\n}\n\nreturn {msg:rpcPayload , metadata: metadata, msgType:'RPC_REQUEST' };",
+          "tbelScript": "// Access telemetry values\nvar remoteSwitching = msg.values ? msg.values.remoteSwitching : null;\nvar buttonNo = msg.values ? msg.values.buttonNo : null;\nvar targetDeviceId = metadata.targetDeviceId;\n\nif (remoteSwitching && buttonNo && targetDeviceId) {\n    // Build exact RPC payload\n    var rpcPayload = {\n        method: 'remoteSwitch',\n        params: {\n            remoteSwitching: remoteSwitching,\n            buttonNo: buttonNo\n        }\n    };\n\n    // Update message\n    msg = rpcPayload;\n    msgType = 'RPC_REQUEST';\n} else {\n    // No target/fields - log and skip RPC (continue as original)\n    if (!targetDeviceId) {\n        log('No target device via Controls relation');\n    }\n    if (!remoteSwitching || !buttonNo) {\n        log('Missing remoteSwitching or buttonNo');\n    }\n}\n\nreturn {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 656,
+          "layoutY": 401
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbChangeOriginatorNode",
+        "name": "Send RPC to Master switch",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "originatorSource": "RELATED",
+          "entityType": null,
+          "entityNamePattern": null,
+          "relationsQuery": {
+            "fetchLastLevelOnly": false,
+            "direction": "TO",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Manages",
+                "entityTypes": [
+                  "DEVICE"
+                ]
+              }
+            ]
+          }
+        },
+        "additionalInfo": {
+          "description": "change originator as the related device",
+          "layoutX": 411,
+          "layoutY": 575
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode",
+        "name": "RPC call to related device",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "timeoutInSeconds": 5
+        },
+        "additionalInfo": {
+          "description": "RPC call to related device",
+          "layoutX": 430,
+          "layoutY": 666
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.action.TbLogNode",
+        "name": "log node for transform",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return 'after transform RPC script: ${Date.now() - metadata._debugStart} ms'",
+          "tbelScript": "return 'after transform RPC script: ${Date.now() - metadata._debugStart} ms'"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 650,
+          "layoutY": 538
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.action.TbLogNode",
+        "name": "log node for transform",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return 'after change originator RPC script: ${Date.now() - metadata._debugStart} ms'",
+          "tbelScript": "return 'after change orig script: ${Date.now() - metadata._debugStart} ms'"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 699,
+          "layoutY": 615
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.action.TbLogNode",
+        "name": "log node for transform",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return 'Incoming message:\\n' + JSON.stringify(msg) + \n       '\\nIncoming metadata:\\n' + JSON.stringify(metadata);\n",
+          "tbelScript": "return 'after transform RPC script: ${Date.now() - metadata._debugStart} ms'"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 681,
+          "layoutY": 705
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Check for Remote or Master devcie",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "var startTime = Date.now();\nmetadata._debugStart = startTime;\n\nvar hasRemoteSwitching = (msg.remoteSwitching !== undefined);\nvar hasNotifyRemotes = (msg.notifyRemotes !== undefined);\n\nif (hasRemoteSwitching || hasNotifyRemotes) {\n    return {msg: msg, metadata: metadata, msgType: hasRemoteSwitching?'REMOTE_SWITCHING':hasNotifyRemotes?'NOTIFY_REMOTES':msgType};\n} ",
+          "tbelScript": "var startTime = Date.now();\nmetadata._debugStart = startTime;\n\nvar hasRemoteSwitching = (msg.remoteSwitching !== undefined);\nvar hasNotifyRemotes = (msg.notifyRemotes !== undefined);\n\n// if (hasRemoteSwitching) {\n//     msgType: 'hasRemoteSwitching';\n// } else if (hasNotifyRemotes) {\n//     msgType: 'hasNotifyRemotes';\n// }\nif (hasRemoteSwitching || hasNotifyRemotes) {\n    return {msg: msg, metadata: metadata, msgType: hasRemoteSwitching?'REMOTE_SWITCHING':hasNotifyRemotes?'NOTIFY_REMOTES':msgType};\n} else { \n    return null;\n}\n}"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 342,
+          "layoutY": 111
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbJsSwitchNode",
+        "name": "Device based switching",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "// Check metadata.msgType and route accordingly\nif (msgType === 'REMOTE_SWITCHING') {\n    return 'REMOTE_SWITCHING';  // Routes to this relation\n} else if (msgType === 'NOTIFY_REMOTES') {\n    return 'NOTIFY_REMOTES';    // Routes to this relation\n} else {\n    return 'False';             // Fallback for unmatched (connect to Log)\n}",
+          "tbelScript": "function nextRelation(metadata, msg) {\n    return ['one','nine'];\n}\nif(msgType == 'POST_TELEMETRY_REQUEST') {\n    return ['two'];\n}\nreturn nextRelation(metadata, msg);"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 412,
+          "layoutY": 252
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "transform target status to remote",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "// Access telemetry values\nvar notifyRemotes = msg.notifyRemotes ? msg.notifyRemotes : null;\n\n//var targetDeviceId = metadata.targetDeviceId;\nvar rpcPayload;\n\nif (notifyRemotes) {\n    // Build exact RPC payload\n    rpcPayload = {\n        method: 'notifyRemotes',\n        params: {\n            targetStatus: msg.relayStatus?\"ON\":\"OFF\"\n        }\n    };\n\n} else {\n    \n}\n\nreturn {msg:rpcPayload , metadata: metadata, msgType:'RPC_REQUEST' };",
+          "tbelScript": "// Access telemetry values\nvar notifyRemotes = msg.notifyRemotes ? msg.notifyRemotes : null;\n\n//var targetDeviceId = metadata.targetDeviceId;\nvar rpcPayload;\n\nif (notifyRemotes) {\n    // Build exact RPC payload\n    rpcPayload = {\n        method: 'notifyRemotes',\n        params: {\n            targetStatus: msg.relayStatus?\"ON\":\"OFF\"\n        }\n    };\n\n    // Update message\n    //msg2 = rpcPayload;\n    //msgType2 = 'RPC_REQUEST';\n} else {\n    // No target/fields - log and skip RPC (continue as original)\n    // if (!targetDeviceId) {\n    //     log('No target device via Controls relation');\n    // }\n    // if (!remoteSwitching || !buttonNo) {\n    //     log('Missing remoteSwitching or buttonNo');\n    // }\n}\n\nreturn {msg:rpcPayload , metadata: metadata, msgType:'RPC_REQUEST' };"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 587,
+          "layoutY": 154
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbChangeOriginatorNode",
+        "name": "send to remote devices",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "originatorSource": "RELATED",
+          "entityType": null,
+          "entityNamePattern": null,
+          "relationsQuery": {
+            "fetchLastLevelOnly": false,
+            "direction": "FROM",
+            "maxLevel": "2",
+            "filters": [
+              {
+                "relationType": "Manages",
+                "entityTypes": [
+                  "DEVICE"
+                ]
+              }
+            ]
+          }
+        },
+        "additionalInfo": {
+          "description": "send to remote devices",
+          "layoutX": 658,
+          "layoutY": 242
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode",
+        "name": "RPC to remote switches",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "timeoutInSeconds": 60
+        },
+        "additionalInfo": {
+          "description": "RPC to remote switches, when master relay is on or Stopped",
+          "layoutX": 811,
+          "layoutY": 307
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.action.TbLogNode",
+        "name": "logNode",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 0
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "return '\\nIncoming message:\\n' + JSON.stringify(msg) + '\\nIncoming metadata:\\n' + JSON.stringify(metadata);",
+          "tbelScript": "return '\\nIncoming message:\\n' + JSON.stringify(msg) + '\\nIncoming metadata:\\n' + JSON.stringify(metadata);"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 951,
+          "layoutY": 373
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 0,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 5,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 7,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 0,
+        "type": "REMOTE_SWITCHING"
+      },
+      {
+        "fromIndex": 7,
+        "toIndex": 8,
+        "type": "NOTIFY_REMOTES"
+      },
+      {
+        "fromIndex": 8,
+        "toIndex": 9,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 10,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 10,
+        "toIndex": 11,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

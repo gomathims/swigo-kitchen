@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "categories": {
+    "switching.on": {
+      "enabled": false,
+      "channels": [
+        "push"
+      ]
+    },
+    "switching.off": {
+      "enabled": false,
+      "channels": [
+        "push"
+      ]
+    },
+    "switching.schedulefailed": {
+      "enabled": true,
+      "channels": [
+        "push",
+        "email"
+      ]
+    },
+    "fault.voltage": {
+      "enabled": true,
+      "channels": [
+        "push"
+      ],
+      "durationMinutes": 2
+    },
+    "fault.current": {
+      "enabled": true,
+      "channels": [
+        "push"
+      ],
+      "durationMinutes": 1
+    },
+    "device.offline": {
+      "enabled": true,
+      "channels": [
+        "push",
+        "email"
+      ],
+      "durationMinutes": 10
+    },
+    "device.online": {
+      "enabled": false,
+      "channels": [
+        "push"
+      ]
+    },
+    "others.tankfull": {
+      "enabled": true,
+      "channels": [
+        "push"
+      ]
+    },
+    "others.flowdetected": {
+      "enabled": true,
+      "channels": [
+        "push"
+      ]
+    }
+  }
+}

@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css?##VERSION##" />
+  <link rel="stylesheet" href="css/style_additional.css?##VERSION##" />
+  <link rel="icon" href="favicon.webp" type="image/x-icon">
+  <script>
+    // Immediately detect app-embedded mode before any rendering to prevent logo flash
+    (function () {
+      var p = new URLSearchParams(window.location.search);
+      if (p.get("app") === "true" || sessionStorage.getItem("appEmbeddedMode") === "true") {
+        document.documentElement.classList.add("app-embedded");
+      }
+    })();
+  </script>
+  <script src="scripts/common.js?##VERSION##" defer></script>
+  <script src="scripts/help.js?##VERSION##" defer></script>
+  <script src="scripts/logmessages.js?##VERSION##" defer></script>
+  <script src="scripts/validation.js?##VERSION##" defer></script>
+  <script src="scripts/script_sch.js?##VERSION##" defer></script>
+  <script src="scripts/script_power.js?##VERSION##" defer></script>
+
+  <script src="scripts/script.js?##VERSION##" defer></script>
+  <script src="scripts/script_additional.js?##VERSION##" defer></script>
+  <title>SwiGO Super Smart</title>
+</head>
+
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <!-- Schedule row icons (images/schedulePlay.svg). Stored once and referenced
+         with <use>, so the two rows cost a tag each instead of a copy of the
+         artwork. Stroke/fill come from .v9-sch-ico and are inherited into the
+         <use> clone; each glyph overrides the fill with its own colour. -->
+    <symbol id="sch-play" viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="18" rx="2.5" ry="2.5"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+      <path d="M9.2 11.2 L9.2 18.8 L17.2 15 Z" fill="#2e7d32" stroke="none"></path>
+    </symbol>
+    <symbol id="sch-pause" viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="18" rx="2.5" ry="2.5"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+      <rect x="8.8" y="11.3" width="2.6" height="7.4" rx="0.4" fill="#ef4444" stroke="none"></rect>
+      <rect x="12.6" y="11.3" width="2.6" height="7.4" rx="0.4" fill="#ef4444" stroke="none"></rect>
+    </symbol>
+    <symbol id="sch-next" viewBox="0 0 24 24">
+      <rect x="3" y="4" width="18" height="18" rx="2.5" ry="2.5"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+      <path d="M6.8 11.5 L6.8 18.5 L12.5 15 Z" fill="#3b82f6" stroke="none"></path>
+      <path d="M12.2 11.5 L12.2 18.5 L17.9 15 Z" fill="#3b82f6" stroke="none"></path>
+    </symbol>
+    <!-- Schedule summary icons: days, timings, owed duration. Same three the
+         cloud widget shows, drawn here instead of pulled from FontAwesome. -->
+    <symbol id="sch-cal" viewBox="0 0 24 24">
+      <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+      <line x1="8" y1="3" x2="8" y2="7"></line>
+      <line x1="16" y1="3" x2="16" y2="7"></line>
+    </symbol>
+    <symbol id="sch-clock" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M12 7v5l3 2"></path>
+    </symbol>
+    <!-- Delete, drawn to match the cloud widget's trash button. -->
+    <symbol id="sch-trash" viewBox="0 0 24 24">
+      <path d="M4 7h16"></path>
+      <path d="M9 7V4h6v3"></path>
+      <path d="M18 7l-1 13H7L6 7"></path>
+      <path d="M10 11v6"></path>
+      <path d="M14 11v6"></path>
+    </symbol>
+    <symbol id="sch-hourglass" viewBox="0 0 24 24">
+      <line x1="7" y1="3" x2="17" y2="3"></line>
+      <line x1="7" y1="21" x2="17" y2="21"></line>
+      <path d="M8 3v4l4 5 4-5V3"></path>
+      <path d="M8 21v-4l4-5 4 5v4"></path>
+    </symbol>
+    <symbol id="icon-eye" viewBox="0 0 576 512">
+      <path
+        d="M288 0C128.94 0 3.85 114.61.3 266.34c-.8 32.34 11.94 63.22 36.02 87.29 10.1 10.09 20.68 19.2 31.87 27.5 62.94 44.48 143.53 68.87 219.82 68.87 144.1 0 269.5-114.6 273-266.34C575.7 82.65 463.96 0 288 0zM287.6 368c-52.76 0-95.96-43.23-95.96-96s43.2-96 95.96-96c52.77 0 95.98 43.22 95.98 96S340.37 368 287.6 368zm0-160a63.73 63.73 0 0 0-63.71 63.7 63.7 63.7 0 0 0 127.41 0A63.73 63.73 0 0 0 287.6 208z" />
+    </symbol>
+  </svg>
+  <div style="display: none;">
+    Version 1.13.15
+  </div>
+  <div class="main-container">
+    <header class="nav-bar">
+      <div id="header-brand-bar" style="display:flex; align-items:center; justify-content:space-between;">
+        <a href="/">
+          <img src="images/logo.png" class="logo" />
+        </a>
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div class="logo-images">
+              <img src="images/wifi_e.svg" id="wifi-e" title="Wifi Excellant" alt="Wifi Excellant"
+                style="display: none;" />
+              <img src="images/wifi_g.svg" id="wifi-g" title="Wifi Good" alt="Wifi Good" style="display: none;" />
+              <img src="images/wifi_w.svg" id="wifi-w" title="Wifi Weak" alt="Wifi Weak" style="display:none;" />
+              <img src="images/ap.png" id="apIcon" title="Access Point" alt="Access Point" style="display: none;" />
+              <img src="images/ethernet_icon.svg" id="ethIcon" title="Ethernet" alt="Ethernet" style="display: none;" />
+              <img src="images/cloud_ok.svg" id="cloudOk" title="Cloud connected" alt="Cloud connected"
+                style="display: none;" />
+              <img src="images/cloud_off.svg" id="cloudOff" title="Cloud not connected" alt="Cloud not connected"
+                style="display: none;" />
+            </div>
+            <span id="apwifiName" style="display: block; font-size: .6rem;"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="v9-header-row" style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+        <h2 class="wpg-heading" style="display: block; flex-shrink:1; min-width:0;" id="switchNameText">SuperSmart</h2>
+        <!-- Single warning icon for any device alert (AP password not set, RTC backup
+             battery weak). Sits just before the menu icons in both normal and
+             app-embedded mode, and opens Settings, where each alert carries its own
+             warning symbol next to the relevant section. -->
+        <img src="images/alert0.svg" id="headerWarning" alt="Device Warning"
+          style="display:none; width:20px; height:20px; cursor:pointer; flex-shrink:0; margin-left:auto;" />
+        <nav class="menu-bar" id="menu-bar-nav"
+          style="position:static; margin-left:auto; display:flex; flex-direction:row; box-shadow:none; width:auto; background:transparent; padding:0; gap:2px;">
+          <div class="main_menu menu-1" onclick="showContent('menu-1')">
+            <img src="images/home.png" alt="Home" /><span class="nav-label">Home</span>
+          </div>
+          <div class="main_menu menu-2" onclick="showContent('menu-2')">
+            <img src="images/schedule.png" alt="Schedule" /><span class="nav-label">Schedule</span>
+          </div>
+          <div class="main_menu menu-3" onclick="showContent('menu-3')">
+            <img src="images/power.png" alt="Protection" /><span class="nav-label">Protection</span>
+          </div>
+          <div class="main_menu menu-4" onclick="showContent('menu-4')">
+            <img src="images/settings.png" alt="Settings" /><span class="nav-label">Settings</span>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <div class="page">
+
+      <main id="content">
+        <div class="home-container-v9 content-div" id="menu-1">
+
+          <!-- Section 1: Control - Duration, Switch, Countdown, Next Schedule -->
+          <div class="v9-section control-section">
+            <button type="button" class="help-i" data-help="home.control" aria-label="Help"></button>
+            <div class="v9-duration-area">
+              <div class="v9-duration-inputs">
+                <div class="v9-duration-item">
+                  <label>HOURS</label>
+                  <input type="number" id="runHours" min="0" max="23" inputmode="numeric" pattern="[0-9]*" value="0" />
+                </div>
+                <span class="v9-duration-colon">:</span>
+                <div class="v9-duration-item">
+                  <label>MINUTES</label>
+                  <input type="number" id="runMinutes" min="0" max="59" inputmode="numeric" pattern="[0-9]*"
+                    value="0" />
+                </div>
+              </div>
+            </div>
+
+            <div id="count-down-timer" class="v9-countdown" style="display: none;">
+              <span id="count-down-hour">00</span><span class="blinking-colon">:</span>
+              <span id="count-down-minute">00</span><span class="blinking-colon">:</span>
+              <span id="count-down-second">00</span>
+            </div>
+
+            <div class="v9-switch-section">
+              <div class="switch-container">
+                <p class="off">OFF</p>
+                <input id="switch-main" type="checkbox" />
+                <label class="switch" for="switch-main"></label>
+                <p class="on">ON</p>
+              </div>
+              <div id="master-status-display"
+                style="display: none; text-align: center; padding: 10px; font-size: 14px; font-weight: bold;">
+                <p>Master Status: <span id="master-status-text">OFF</span></p>
+              </div>
+            </div>
+
+            <!-- The window that is running (or has just finished delivering its
+                 owed duration). Sits under the switch so it is not mistaken for
+                 an upcoming event. -->
+            <div id="cur-sch-display" class="v9-current-schedule" style="display: none;">
+            </div>
+
+            <div id="next-sch-display" class="v9-next-schedule" style="display: none;">
+            </div>
+          </div>
+
+          <!-- Section 2: Telemetry -->
+          <div class="v9-section v9-telemetry-section" id="pAttribs">
+            <button type="button" class="help-i" data-help="home.telemetry" aria-label="Help"></button>
+            <!-- VSMR 3-phase voltages: shown only when is3Ph == 2 (3-Phase with VSMR) -->
+            <div class="v9-telemetry-grid vsmronly" id="vsmr-voltages" style="display: none; margin-bottom: 8px;">
+              <div class="v9-telemetry-item vsmr-phase vsmr-r">
+                <span id="vsmrR" class="v9-telemetry-value">0</span>
+                <span class="v9-telemetry-unit vsmr-phase-label">R-Phase</span>
+              </div>
+              <div class="v9-telemetry-item vsmr-phase vsmr-y">
+                <span id="vsmrY" class="v9-telemetry-value">0</span>
+                <span class="v9-telemetry-unit vsmr-phase-label">Y-Phase</span>
+              </div>
+              <div class="v9-telemetry-item vsmr-phase vsmr-b">
+                <span id="vsmrB" class="v9-telemetry-value">0</span>
+                <span class="v9-telemetry-unit vsmr-phase-label">B-Phase</span>
+              </div>
+            </div>
+            <div class="v9-telemetry-grid" id="main-telemetry-grid">
+              <div class="v9-telemetry-item">
+                <span id="vval" class="v9-telemetry-value">0</span>
+                <span class="v9-telemetry-unit" id="vvalUnit">V</span>
+                <span id="vsmrStatus" class="vsmr-status" style="display: none;">--</span>
+              </div>
+              <div class="v9-telemetry-item">
+                <span id="cval" class="v9-telemetry-value">0</span>
+                <span class="v9-telemetry-unit">A</span>
+              </div>
+              <div class="v9-telemetry-item sglphonly" style="display: none;">
+                <span id="power" class="v9-telemetry-value">0</span>
+                <span class="v9-telemetry-unit">W</span>
+              </div>
+              <div class="v9-telemetry-item sglphonly" style="display: none;">
+                <span id="energy" class="v9-telemetry-value">0</span>
+                <span class="v9-telemetry-unit v9-stacked-unit"><span
+                    class="v9-unit-prefix">Session</span><span>kWh</span></span>
+              </div>
+              <div class="v9-telemetry-item sglphonly" style="display: none;">
+                <span id="cumEnergy" class="v9-telemetry-value">0</span>
+                <span style="display:flex; align-items:center; gap:6px; margin-left:auto;"><a href="energy.html"
+                    style="font-size:0.65rem; color:#2e7d32; text-decoration:none;padding-right: 2px;">Details</a><span
+                    class="v9-telemetry-unit v9-stacked-unit"><span
+                      class="v9-unit-prefix">Cum.</span><span>kWh</span></span></span>
+              </div>
+            </div>
+            <!-- VSMR 3-phase voltages: shown only when is3Ph == 2 (3-Phase with VSMR)
+            <div class="v9-telemetry-grid vsmronly" id="vsmr-voltages" style="display: none; margin-top: 8px;">
+              <div class="v9-telemetry-item vsmr-phase vsmr-r">
+                <span id="vsmrR" class="v9-telemetry-value">0</span>
+                <span class="v9-telemetry-unit v9-stacked-unit"><span class="v9-unit-prefix vsmr-phase-label">R</span><span>V</span></span>
+              </div>
+              <div class="v9-telemetry-item vsmr-phase vsmr-y">
+                <span id="vsmrY" class="v9-telemetry-value">0</span>
+                <span class="v9-telemetry-unit v9-stacked-unit"><span class="v9-unit-prefix vsmr-phase-label">Y</span><span>V</span></span>
+              </div>
+              <div class="v9-telemetry-item vsmr-phase vsmr-b">
+                <span id="vsmrB" class="v9-telemetry-value">0</span>
+                <span class="v9-telemetry-unit v9-stacked-unit"><span class="v9-unit-prefix vsmr-phase-label">B</span><span>V</span></span>
+              </div>
+            </div> -->
+          </div>
+
+          <!-- Section 3: Alerts & Info -->
+          <div class="v9-section v9-alert-section" id="v9-alert-container" style="display: none;">
+            <button type="button" class="help-i" data-help="home.alerts" aria-label="Help"></button>
+            <div class="alert" id="alert">
+              <span id="alert-text" style="color:rgb(210, 30, 30)"></span>
+            </div>
+            <div class="alert-icon" id="alert-icon" style="display: none;">
+              <img src="images/alert.svg" alt="Alert" title="Voltage/Phase Alert"
+                style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px;" />
+              <span id="alert-text2" style="color:rgb(210, 30, 30)"></span>
+            </div>
+            <div class="alert-icon" id="flow-alert-icon" style="display: none;">
+              <span
+                style="width: 20px; height: 20px; vertical-align: middle; margin-right: 5px; display: inline-block; text-align: center; line-height: 20px; color: #468a42; font-weight: bold;">ℹ</span>
+              <span id="flow-alert-text" style="color:#468a42"></span>
+            </div>
+          </div>
+
+          <!-- Section 4: Recent Logs -->
+          <div class="v9-section v9-logs-section">
+            <div class="v9-logs-header">
+              <span class="v9-logs-title">Recent Logs</span>
+              <div style="display:flex; align-items:center; gap:15px;">
+                <span class="v9-log-refresh-btn" onclick="fetchLogsAndUpdateUI()" title="Refresh logs">&#x21bb;</span>
+                <a href="log.html" class="v9-more-logs-btn">More → &nbsp; &nbsp;</a>
+                <button type="button" class="help-i" data-help="home.logs" aria-label="Help"></button>
+              </div>
+            </div>
+            <div class="log-content"></div>
+          </div>
+
+        </div>
+
+
+        <div class="main-schedule-container padding-outer-2 content-div" id="menu-2">
+          <div class="schedule-container gap-flex">
+            <div>
+              <h4 class="main-heading" style="float:left;">Schedules</h4>
+              <div class="buttons" style="float:right; display:flex; align-items:center; gap:8px;">
+                <input type="button" id="add-schedule" class="cn act-btn" value="Add" style="margin-top: 0px;" />
+              </div>
+            </div>
+            <div class="accordion cn" id="accordion-template" style="display: none;">
+              <div class="accordion-title padding-div"
+                style="display: flex; align-items: center; justify-content: space-between;">
+                <span class="sch-name"
+                  style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">Weekly-Cyc:Mo Tu We Th Fr Sa
+                  Su</span>
+                <div style="display: flex; gap: 2px;">
+                  <label class="sch-enable" onclick="event.stopPropagation()">
+                    <input type="checkbox" class="sch-enable-chk" onclick="markC(this)">
+                    <span class="slider round" style="height: 23px;"></span>
+                  </label>
+                  <button class="accordion-button" style="height: 25px; padding: 0; border: none; background: none;">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="grey" xmlns="http://www.w3.org/2000/svg">
+                      <path fill="#757575" d="M12 15L7 10H17L12 15Z"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="schedule-card" id="schedule-card-template" style="display: none; position: relative">
+                <button type="button" class="help-i sch-card-help" data-help="schedule.details"
+                  aria-label="Help"></button>
+                <div class="sch-row upper-sch-part">
+                  <div class="sch-field schedule-type-dropdown">
+                    <h4 class="sh">Schedule Type</h4>
+                    <select name="sch-type" id="sch-type" class="cn"
+                      onchange="getSwitchOption(this); markC(this)">
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                    </select>
+                  </div>
+
+                  <div class="sch-field" id="weekly-options">
+                    <h4 class="sh">Run Every</h4>
+                    <div class="weekly__days cn">
+                      <div class="day" onclick="tog(this); markC(this)">
+                        <input class="day-check" type="checkbox" data-day="mon" />
+                        <label class="day-label">M</label>
+                      </div>
+                      <div class="day" onclick="tog(this); markC(this)">
+                        <input class="day-check" type="checkbox" data-day="tue" />
+                        <label class="day-label">T</label>
+                      </div>
+                      <div class="day" onclick="tog(this); markC(this)">
+                        <input class="day-check" type="checkbox" data-day="wed" />
+                        <label class="day-label">W</label>
+                      </div>
+                      <div class="day" onclick="tog(this); markC(this)">
+                        <input class="day-check" type="checkbox" data-day="thu" />
+                        <label class="day-label">T</label>
+                      </div>
+                      <div class="day" onclick="tog(this); markC(this)">
+                        <input class="day-check" type="checkbox" data-day="fri" />
+                        <label class="day-label">F</label>
+                      </div>
+                      <div class="day" onclick="tog(this); markC(this)">
+                        <input class="day-check" type="checkbox" data-day="sat" />
+                        <label class="day-label">S</label>
+                      </div>
+                      <div class="day" onclick="tog(this); markC(this)">
+                        <input class="day-check" id="sun" type="checkbox" data-day="sun" />
+                        <label class="day-label">S</label>
+                      </div>
+                    </div>
+                  </div>
+
+
+
+                </div>
+                <div class="timings-and-restart">
+
+                  <!-- Schedule Mode and, for Duration Based, the owed duration -->
+                  <div class="sch-row">
+                    <div class="sch-field">
+                      <h4 class="sh">Schedule Mode</h4>
+                      <select id="sch-mode" class="cn" onchange="toggleScheduleMode(this); markC(this)">
+                        <option value="clock">Clock Based</option>
+                        <option value="duration">Duration Based</option>
+                      </select>
+                    </div>
+
+                    <div class="sch-field duration-mode-fields" style="display: none;">
+                      <h4 class="sh">Duration</h4>
+                      <div class="sch-dur-inputs">
+                        <input type="number" id="schDurHrs" class="cyclic-input" min="0" max="23" value="0"
+                          onchange="markC(this)" /><span>h &nbsp;</span>
+                        <input type="number" id="schDurMins" class="cyclic-input" min="0" max="59" value="0"
+                          onchange="markC(this)" /><span>m</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Filled by updateDurationRestartWarning(): a duration
+                       schedule cannot finish its owed time across a power cut
+                       unless restart-after-power-resumption is enabled. -->
+                  <div class="sch-warn" style="display: none;"></div>
+
+                  <div class="sch-row timings">
+                    <div class="sch-field start-duration">
+                      <h4 class="sh">Start Time</h4>
+                      <input type="time" id="start-time" class="input-div-time cn" name="sT" value="" required
+                        onchange="markC(this)" />
+                    </div>
+                    <div class="sch-field end-duration">
+                      <h4 class="sh">End Time</h4>
+                      <input type="time" id="end-time" class="input-div-time cn" name="eT" value="" required
+                        onchange="markC(this)" />
+                    </div>
+                  </div>
+
+                  <!-- Cyclic Option (Clock Based only) -->
+                  <div class="cyclic-option">
+                    <label class="sh" for="isCyclic">
+                      <input type="checkbox" id="isCyclic" class="cyclic-checkbox"
+                        onchange="toggleCyclicFields(this); markC(this)" />
+                      Is Cyclic
+                    </label>
+                    <button type="button" class="help-i help-i-inline" data-help="schedule.cyclic" aria-label="Help"></button>
+                  </div>
+
+                  <div class="sch-row cyclic-fields" style="display: none;">
+                    <div class="sch-field">
+                      <h4 class="sh">On Duration</h4>
+                      <div class="sch-dur-inputs">
+                        <input type="number" id="onDurHrs" class="cyclic-input" min="0" max="23" value="0"
+                          onchange="markC(this)" /><span>h &nbsp;</span>
+                        <input type="number" id="onDurMins" class="cyclic-input" min="0" max="59" value="0"
+                          onchange="markC(this)" /><span>m</span>
+                      </div>
+                    </div>
+                    <div class="sch-field">
+                      <h4 class="sh">Off Duration</h4>
+                      <div class="sch-dur-inputs">
+                        <input type="number" id="offDurHrs" class="cyclic-input" min="0" max="23" value="0"
+                          onchange="markC(this)" /><span>h &nbsp;</span>
+                        <input type="number" id="offDurMins" class="cyclic-input" min="0" max="59" value="0"
+                          onchange="markC(this)" /><span>m</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- <div class="restart-option">
+                    <h4 class="sh">Restart after power resumption</h4>
+                    <div id="restart-input" class="cn" style="margin-left: 80px;">
+                      <div>
+                        <input type="radio" class="restart-input" name="restart-input" value="yes" onchange="markC(this)" />
+                        <label>Yes</label>
+                      </div>
+                      <div>
+                        <input type="radio" class="restart-input" name="restart-input" value="no" checked
+                          onchange="markC(this)" />
+                        <label>No</label>
+                      </div>
+                    </div>
+                  </div> -->
+
+                </div>
+              </div>
+            </div>
+            <div class="gap-flex" id="schedule-card-container"></div>
+
+
+          </div>
+        </div>
+
+        <div class="power-settings-container padding-outer-2 content-div" id="menu-3">
+          <div class="power-settings gap-flex">
+            <h4 class="main-heading">Protection Settings</h4>
+            <div class="pcard pd2">
+              <h4 class="sh">Dryrun current</h4>
+
+              <div class="form-grid">
+                <span class="lbl">Lower Limit</span>
+                <input type="number" id="drCur" class="inp-s cn" name="drCur" value="" required="">
+                <span class="unit">Amps</span>
+                <button type="button" class="help-i" data-help="power.dryrunCurrent" aria-label="Help"></button>
+                <span class="lbl">Restart required after Dryrun fault?</span>
+                <input type="checkbox" id="res-dr" onchange="restartChange(this)" />
+                <span class="unit"></span>
+                <button type="button" class="help-i" data-help="power.dryrunRestart" aria-label="Help"></button>
+                <span class="lbl">Retry after</span>
+                <input type="number" id="drMin" class="inp-s cn del-min" name="drMin" value="" />
+                <span class="unit">Mins</span>
+                <button type="button" class="help-i" data-help="power.dryrunRetry" aria-label="Help"></button>
+                <span class="lbl">Is this device used for Protection only?</span>
+                <div class="radio-control">
+                  <label class="radio-option"><input type="radio" class="slave-control-device" name="slave-control-device" value="1" />Yes</label>
+                  <label class="radio-option"><input type="radio" class="slave-control-device" name="slave-control-device" value="0" />No</label>
+                </div>
+                <span class="unit"></span>
+                <button type="button" class="help-i" data-help="power.protectionOnly" aria-label="Help"></button>
+
+                <span class="lbl">Threshold current</span>
+                <input type="number" id="thCur" class="inp-s cn" name="thCur" value="" required disabled />
+                <span class="unit">Amps</span>
+                <button type="button" class="help-i" data-help="power.thresholdCurrent" aria-label="Help"></button>
+
+              </div>
+            </div>
+            <div class="pcard pd2">
+              <h4 class="sh">Overload current</h4>
+              <div class="form-grid">
+                <span class="lbl">Upper Limit</span>
+                <input type="number" id="orCur" class="inp-s cn" name="orCur" value="" required />
+                <span class="unit">Amps</span>
+                <button type="button" class="help-i" data-help="power.overcurrent" aria-label="Help"></button>
+
+                <span class="lbl">Restart required after Overload fault?</span>
+                <input type="checkbox" id="res-ol" onchange="restartChange(this)" />
+                <span class="unit"></span>
+                <button type="button" class="help-i" data-help="power.overcurrentRestart" aria-label="Help"></button>
+                <span class="lbl">Retry after</span>
+                <input type="number" id="orMin" class="inp-s cn del-min" name="orMin" value="" />
+                <span class="unit">Mins</span>
+                <button type="button" class="help-i" data-help="power.overcurrentRetry" aria-label="Help"></button>
+
+              </div>
+            </div>
+            <div class="pcard pd2">
+              <h4 class="sh">Low Voltage Limit</h4>
+              <div class="form-grid">
+                <span class="lbl">Lower Limit</span>
+                <input type="number" id="lVol" class="inp-s cn" name="lVol" value="" required />
+                <span class="unit">Volts</span>
+                <button type="button" class="help-i" data-help="power.lowVoltage" aria-label="Help"></button>
+
+                <span class="lbl">Restart required after Low voltage fault?</span>
+                <input type="checkbox" id="res-lv" onchange="restartChange(this)" />
+                <span class="unit"></span>
+                <button type="button" class="help-i" data-help="power.lowVoltageRestart" aria-label="Help"></button>
+                <span class="lbl">Retry after</span>
+                <input type="number" id="lVolMin" class="inp-s cn del-min" name="lVolMin" value="" />
+                <span class="unit">Mins</span>
+                <button type="button" class="help-i" data-help="power.lowVoltageRetry" aria-label="Help"></button>
+
+              </div>
+            </div>
+            <div class="pcard pd2">
+              <h4 class="sh">High Voltage Limit</h4>
+              <div class="form-grid">
+                <span class="lbl">Upper Limit</span>
+                <input type="number" id="hVol" class="inp-s cn" name="hVol" value="" required />
+                <span class="unit">Volts</span>
+                <button type="button" class="help-i" data-help="power.highVoltage" aria-label="Help"></button>
+
+                <span class="lbl">Restart required after High voltage fault?</span>
+                <input type="checkbox" id="res-hv" onchange="restartChange(this)" />
+                <span class="unit"></span>
+                <button type="button" class="help-i" data-help="power.highVoltageRestart" aria-label="Help"></button>
+                <span class="lbl">Retry after</span>
+                <input type="number" id="hVolMin" class="inp-s cn del-min" name="hVolMin" value="" style="padding-left: 5px;" />
+                <span class="unit">Mins</span>
+                <button type="button" class="help-i" data-help="power.highVoltageRetry" aria-label="Help"></button>
+
+
+              </div>
+            </div>
+            <div class="pcard pd2">
+              <h4 class="sh">Restart Options </h4>
+
+              <div class="form-grid">
+                <span class="lbl">Restart required after power resumption?</span>
+                <input type="checkbox" id="res-i-1" onchange="restartChange(this)" />
+                <span class="unit"></span>
+                <button type="button" class="help-i" data-help="power.powerResumeRestart" aria-label="Help"></button>
+
+
+                <span class="lbl">Restart delay</span>
+                <input type="number" id="startDelayMins" class="inp-s cn del-min" name="startDelayMins" value="" required />
+                <span class="unit">Mins</span>
+                <button type="button" class="help-i" data-help="power.restartDelay" aria-label="Help"></button>
+              </div>
+            </div>
+            <div class="pcard pd2">
+              <h4 class="sh">Maximum Run Configuration </h4>
+
+              <div class="form-grid">
+                <span class="lbl">Max run Duration</span>
+                <input type="number" id="maxRunTimeMins" class="inp-s cn del-min" name="maxRunTimeMins" value="" required />
+                <span class="unit">Mins</span>
+                <button type="button" class="help-i" data-help="power.maxRunDuration" aria-label="Help"></button>
+
+                <span class="lbl">Break time</span>
+                <input type="number" id="breakTimeMins" class="inp-s cn del-min" name="breakTimeMins" value="" required />
+                <span class="unit">Mins</span>
+                <button type="button" class="help-i" data-help="power.breakTime" aria-label="Help"></button>
+
+              </div>
+            </div>
+
+            <!-- <div class="pcard pd2">
+              <h4 class="sh">Device Type</h4>
+              <div class="form-grid">
+                <span class="lbl">Is the device a 3-phase Motor?</span>
+                <br />
+                <div>
+                  <input type="radio" class="three-phase-device" name="three-phase-device" value="1" />
+                  <label>Yes</label>
+                </div>
+                <div>
+                  <input type="radio" class="three-phase-device" name="three-phase-device" value="0" />
+                  <label>No</label>
+                </div>
+                <span class="hi" tabindex="0">i</span>
+                <span class="ht">This selection is required to calculate the power consumption of the 3-phase motor.
+                </span>
+               
+              
+            </div> -->
+              </div>
+            <div class="value-button">
+              <button type="button" class="set-value cn button" onclick="setCur()">Set Values</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="other-settings-container padding-outer-2 content-div" id="menu-4">
+          <div class="other-settings gap-flex">
+            <!--h4 class="main-heading">Other Settings</h4-->
+            <div class="reset-system-time i-c-c  cn pd2 collapsible-section collapsed" data-section-id="device-time">
+              <div class="hc pr collapsible-header">
+                <h4 id="deviceTimeTitle">Device time
+                  <img src="images/alert0.svg" id="rtcBattWarningSettings"
+                    title="RTC backup battery is weak - replace the coin cell (Lithium CR1220, 3V)"
+                    alt="RTC Battery Warning"
+                    style="display:none; width:16px; height:16px; vertical-align:-2px; margin-left:4px;" />
+                </h4>
+                <button type="button" class="help-i" data-help="settings.deviceTime" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <p class="cn" style="margin:10px 1px 10px 20px"><span id="rtcTime" name="rtctime"></span></p>
+                <p id="rtcBattError" class="cn"
+                  style="display:none; margin:0 1px 10px 20px; color:#e65100; font-weight:600;">
+                  &#9888; RTC backup battery is weak - the device can lose track of time during power
+                  outages. Please replace the coin cell - Lithium CR1220 (3V).
+                </p>
+                <button id="rtcBattReplacedBtn" type="button" class="cn button"
+                  style="display:none; margin:0 1px 12px 20px;" onclick="confirmBatteryReplaced()">
+                  I replaced the battery
+                </button>
+                <!-- <div >
+                          <input type="submit" id="resetTime" class="cn button" value="Reset Time" />
+                        </div>     -->
+              </div>
+            </div>
+            <div class="wifi-settings i-c-c cn pd2 collapsible-section collapsed" data-section-id="wifi-settings">
+              <div class="hc pr collapsible-header">
+                <h4 class="">WiFi settings</h4>
+                <button type="button" class="help-i" data-help="settings.wifi" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <!-- <h4 class="sh">WiFi settings</h4> -->
+                <!-- <p class="cn">Wi-Fi Mode: <span id="wifiMode"></span> &nbsp;&nbsp;Wi-Fi SSID: <span id="ssidName" name="ssidName"></span></p> -->
+                <div class="cn" style="margin:10px 1px 10px 5px; font-style:italic; position:relative;">
+                  <div id="wifiStrengthIndicator"
+                    style="position:absolute; right:2rem; top:5px; text-align:center; display:none;">
+                    <div id="wifiImgIndicator" style="display:none;">
+                      <img src="images/wifi_e.svg" id="wifi-e-cn" title="Wifi Excellent" alt="Wifi Excellent"
+                        style="display:none; width:40px; height:40px;" />
+                      <img src="images/wifi_g.svg" id="wifi-g-cn" title="Wifi Good" alt="Wifi Good"
+                        style="display:none; width:40px; height:40px;" />
+                      <img src="images/wifi_w.svg" id="wifi-w-cn" title="Wifi Weak" alt="Wifi Weak"
+                        style="display:none; width:40px; height:40px;" />
+                    </div>
+                    <div id="wifiRssiLabel" style="font-size:0.75em; color:#666;"></div>
+                    <div id="wifiNameLabel" style="font-size:0.7em; color:#555; white-space:nowrap;"></div>
+                  </div>
+                  <span id="connectionDetails" name="connectionDetails"></span>
+                  <span id="wiFiDetails" name="wiFiDetails" style="display:block; margin-top:5px;"></span>
+
+                </div>
+
+
+                <div class="pb5">
+                  <p class="p-s pb2" title="WiFi Network">WiFi Network</p>
+                  <div style="display: flex; gap: 5px; margin-top: 5px;">
+                    <select id="wifiNetwork" class="idB cn"
+                      style="flex: 1; font-size: 0.85rem; padding: 3px 3px; min-height: 30px; line-height: 1.4;"
+                      onchange="handleWiFiNetworkChange()">
+                      <option value="">Scan networks</option>
+                    </select>
+                    <a id="scanNetworksBtn" href="javascript:scanNetworks()"
+                      style="font-size: 0.85rem; padding: 8px 10px; white-space: nowrap;" title="Refresh network list">
+                      <u>Scan</u>
+                    </a>
+                  </div>
+                  <div id="customWiFiDiv" style="display: none; margin-top: 15px;">
+                    <p class="p-s pb2" title="WiFi Network Name">WiFi Network Name</p>
+                    <input type="text" id="customWiFiSSID" class="idB cn" style="margin-top:5px; font-size: 0.9em;"
+                      name="customWiFiSSID" maxlength="20" placeholder="Enter WiFi network name" />
+                  </div>
+                </div>
+                <div class="pc" id="wifiPasswordDiv" style="display: none;">
+                  <p class="p-s pb2" title="Password">Password </p>
+                  <input type="password" id="pass" class="idB" name="pass" maxlength="20" required />
+                  <span class="view-password" onclick="viewPassword('pass')">
+                    <svg class="icon">
+                      <use href="#icon-eye"></use>
+                    </svg>
+                  </span>
+                </div>
+                <span style="padding: 5px;"><a href="#" id="toggleWifiSettings"
+                    style="padding: 10px; text-decoration: none;" onclick="toggleWifiSettings()">IP Settings (Optional)
+                    ▼</a><button type="button" class="help-i help-i-inline" data-help="settings.wifiIp"
+                    aria-label="Help"></button></span>
+                <div id="set-wifi-div" class="flex" style="display: none;">
+                  <div class="pb5">
+                    <p class="p-s pb2" title="Preferred IP">Preferred IP <sup>**</sup></p>
+                    <input type="text" id="preferredIP" class="idB cn" name="preferredIP" maxlength="20" required />
+                  </div>
+                  <div class="pb5">
+                    <p class="p-s pb2" title="Gateway IP">Gateway IP <sup>**</sup></p>
+                    <input type="text" id="gwIP" class="idB cn" name="gwIP" maxlength="20" required />
+                  </div>
+                  <div class="pb5">
+                    <p class="p-s pb2" title="Subnet Mask">Subnet Mask <sup>***</sup></p>
+                    <input type="text" id="sbMask" class="idB cn" name="sbMask" maxlength="20"
+                      placeholder="Not mandatory" />
+                  </div>
+                  <div class="pb5">
+                    <p class="p-s pb2" title="Primary DNS server">Primary DNS Server IP<sup>***</sup></p>
+                    <input type="text" id="pDNS" class="idB cn" name="pDNS" maxlength="20"
+                      placeholder="Not mandatory" />
+                  </div>
+                  <div class="pb5">
+                    <p class="p-s pb2" title="Secondary DNS server">Secondary DNS Server IP<sup>***</sup></p>
+                    <input type="text" id="sDNS" class="idB cn" name="sDNS" maxlength="20"
+                      placeholder="Not mandatory" />
+                  </div>
+
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                  <input type="button" id="submitWiFi" class="cn button" value="Save" />
+                  <input type="button" id="removeWiFi" class="cn button" value="Remove WiFi"
+                    title="Forget the saved WiFi and go back to AP mode" style="display: none;" />
+                </div>
+
+                <!-- <input type="text" id="ssid" class="input-div cn" name="ssid" maxlength="20"
+                          placeholder="SSID" required />
+                        <input type="password" id="pass" class="input-div cn" name="pass" maxlength="20"
+                          placeholder="Password" required /> -->
+              </div>
+            </div>
+
+            <div class="wifi-settings i-c-c  cn pd2 collapsible-section collapsed" data-section-id="device-name">
+              <div class="hc pr collapsible-header">
+                <h4 class="">Device Name</h4>
+                <button type="button" class="help-i" data-help="settings.deviceName" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <div class="deviceName">
+                  <p class="p-s pb2"
+                    title="Any specific name to this SwiGO Switch. eg., Sump-motor, Geiser-2. Use alphabets, numbers and special characters Hiphen(-)/Underscore(_)/Hash(#)/At(@) only, No Space allowed, Max 20 characters">
+                    Name </p>
+
+                  <input type="text" id="deviceName" class="idB" name="deviceName" maxlength="20" minlength="4"
+                    required />
+                </div>
+
+                <div>
+                  <input type="button" id="submitDeviceName" class="cn button" value="Save"
+                    onclick="saveDeviceName()" />
+                </div>
+              </div>
+            </div>
+
+            <div class="wifi-settings i-c-c  cn pd2 collapsible-section collapsed" data-section-id="device-pin">
+              <div class="hc pr collapsible-header">
+                <h4>Device Pin</h4>
+                <button type="button" class="help-i" data-help="settings.devicePin" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <div class="dp pc">
+                  <p class="p-s pb2" title="Pin to access this SwiGO Switch.">Pin </p>
+                  <input type="password" id="devicePin" class="input-div" name="devicePin" maxlength="4" minlength="4"
+                    required />
+                  <span class="view-password" onclick="viewPassword('devicePin')">
+                    <svg class="icon">
+                      <use href="#icon-eye"></use>
+                    </svg>
+                  </span>
+                </div>
+                <div>
+                  <input type="button" id="submitDevicePin" class="cn button" value="Save" onclick="saveDevicePin()" />
+                </div>
+              </div>
+            </div>
+
+
+            <div class="wifi-settings i-c-c  cn pd2 collapsible-section collapsed" data-section-id="ap-password">
+              <div class="hc pr collapsible-header">
+                <h4 id="apPassTitle">(WiFi) Access Point Password
+                  <img src="images/alert0.svg" id="apPassWarningSettings" title="AP password is not set yet!"
+                    alt="AP Password Warning"
+                    style="display:none; width:16px; height:16px; vertical-align:-2px; margin-left:4px;" />
+                </h4>
+                <button type="button" class="help-i" data-help="settings.apPassword" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <p id="apPassWarningText" class="cn"
+                  style="display:none; margin:0 10px 10px 20px; color:#e65100; font-weight:600;">
+                  &#9888; The device Access Point is not secured with a password. Please set one.
+                </p>
+                <div class="dp pc">
+                  <p class="p-s pb2" title="Password to connect to the Access point of this SwiGO Switch.">AP Password
+                  </p>
+                  <input type="password" id="APPass" class="input-div" name="APPass" maxlength="20" minlength="8"
+                    required />
+                  <span class="view-password" onclick="viewPassword('APPass')">
+                    <svg class="icon">
+                      <use href="#icon-eye"></use>
+                    </svg>
+                  </span>
+                </div>
+                <div>
+                  <input type="button" id="submitAPPassword" class="cn button" value="Save" onclick="saveAPPass()" />
+                </div>
+              </div>
+            </div>
+
+            <div class="i-c-c  cn pd2 collapsible-section collapsed" data-section-id="logs">
+              <div class="hc pr collapsible-header">
+                <h4>Logs</h4>
+                <button type="button" class="help-i" data-help="settings.logs" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <div>
+                  <input type="button" id="clearLogs" class="cn button" value="Clear Logs" />
+                  <div style="margin-top:5px"></div>
+                  <input type="button" id="resetCumEnergy" class="cn button" value="Reset Cumulative Energy" />
+                </div>
+              </div>
+            </div>
+            <div class="i-c-c  cn pd2 collapsible-section collapsed" data-section-id="restart-device">
+              <div class="hc pr collapsible-header">
+                <h4>Restart Device</h4>
+                <button type="button" class="help-i" data-help="settings.restart" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <div>
+                  <input type="button" id="restartDevice" class="cn button" value="Restart Device"
+                    onclick="restartDevicePrompt()" />
+                  <div style="margin-top:5px"></div>
+                  <input type="button" id="clearFault" class="cn button" value="Clear Fault conditions"
+                    onclick="ClearFaultConditionPrompt()" />
+                  <div style="margin-top:5px"></div>
+                  <input type="button" id="logoutBtn" class="cn button" value="Logout Application" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Cloud Settings -->
+            <div class="wifi-settings i-c-c  cn pd2 collapsible-section collapsed" data-section-id="cloud-settings">
+              <div class="hc pr collapsible-header">
+                <h4>Cloud Settings</h4>
+                <button type="button" class="help-i" id="cloudHelpIcon" data-help="settings.cloud" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <div id="cloudEmailDiv">
+                  <div class="deviceName" style="margin-bottom: 7px;">
+                    <p class=" p-s pb2" title="email">Email Address </p>
+                    <input type="email" id="clEmail" class="idB" name="clEmail" maxlength="120" required />
+
+                  </div>
+                  <div>
+                    <input type="button" id="connectCloud" class="cn button" value="Connect to Cloud"
+                      onclick="connectCloud()" />
+                  </div>
+                </div>
+                <div class=" " id="cloudStatusDiv" style="display: none;">
+                  <p class="cn" id="cloudStatusText" style="margin-bottom: 7px;">Your device is connected to EVIQtech
+                    Cloud.</p>
+                  <input type="button" id="disconnectCloud" class="cn button" value="Disconnect Cloud"
+                    onclick="pauseCloud('disconnect')" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Firmware Update -->
+            <div class="i-c-c  cn pd2 collapsible-section collapsed" data-section-id="firmware-update">
+              <div class="hc pr collapsible-header">
+                <h4>Firmware update</h4>
+                <button type="button" class="help-i" data-help="settings.firmware" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <p class="cn pb10" style="padding-right: 30px;">Current Firmware Version: <span id="firmwareVersion"
+                    name="firmwareVersion"></span></p>
+
+                <form name="uploadForm" id="uploadForm" method="POST" action="/updateSystem"
+                  enctype="multipart/form-data" onsubmit="return firmwareUpdate(event)">
+                  <label for="firmware" class="pb2">Firmware :</label><br>
+                  <input type="file" name="firmware"><br><br>
+
+                  <input type="submit" class="cn button" value="Update Firmware">
+                </form>
+              </div>
+            </div>
+
+            <!-- Float and Flow Switch Settings -->
+            <div class="i-c-c  cn pd2 collapsible-section collapsed" id="floatSwitchArea" data-section-id="float-switch"
+              style="display: none;">
+              <div class="hc pr collapsible-header">
+                <h4>Float switch function</h4>
+                <button type="button" class="help-i" data-help="settings.floatSwitch" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <div id="fl-con">
+                  <div style="margin:5px 30px 5px 20px; font-style:italic">Make sure you have not connected the Float
+                    switch wires
+                    to 220V AC. If connected to 220V
+                    AC, warranty will be void!!! Float switch wires outputting 5V DC only are to be connected directly
+                    to float
+                    switch.</div>
+
+                  <div class="" style="margin: 10px 0px">
+
+                    <p class="pb10">Please select the float switch mode:</p>
+                    <div class="pb2">
+                      <input type="radio" id="flNo" name="flSch" value="0" checked />
+                      <label for="flNo">No</label>
+                    </div>
+                    <div class="pb2">
+                      <input type="radio" id="flTankFull" name="flSch" value="1" />
+                      <label for="flTankFull">Yes, connection for the Tank Full Detection. </label>
+                    </div>
+                    <div class="pb2">
+                      <input type="radio" id="flTankFullEmpty" name="flSch" value="2" />
+                      <label for="flTankFullEmpty">Yes, connection for the Water Flow Detection or for Tank Full and
+                        Tank Empty
+                        Detection. </label>
+                    </div>
+
+                  </div>
+                </div>
+                <div id="flowDelayCont"
+                  style="display: none; flex-direction: column; align-items: flex-start; width: 300px; margin-top: 10px;">
+                  <div style="margin-bottom: 10px;">
+                    <label for="flowDetectDelay" class="pb2">Flow Detection Delay (seconds):</label><button
+                      class="help-i help-i-inline" data-help="settings.floatFlowDelay" aria-label="Help"></button>
+                    <input type="number" id="flowDetectDelay" min="0" max="300" value="10" class="light-pc"
+                      style="width: 92%;" />
+                    <!-- <p class="help-below-box">Seconds to wait before detecting flow start (1-300)</p> -->
+                  </div>
+                  <div>
+                    <label for="flowStopDelay" class="pb2">Flow Stop Delay (seconds):</label>
+                    <input type="number" id="flowStopDelay" min="0" max="300" value="10" class="light-pc"
+                      style="width: 92%;" />
+                    <!-- <p class="help-below-box">Seconds to wait before detecting flow stop (1-300)</p> -->
+                  </div>
+                </div>
+                <div id="ftCont"
+                  style="display: none; flex-direction: column; align-items: flex-start; width: 300px; margin-top: 10px;">
+                  <label for="flTxt" class="pb2">Enter connection confirmation text:</label>
+                  <input type="text" id="flTxt" onpaste="return false;" style="width: 92%;"
+                    placeholder="220V is not connected to float switch" class="light-pc" />
+                  <p class="help-below-box">Please type "220V is not connected to float switch".</p>
+                </div>
+
+                <div style="margin-top: 10px; display: flex; gap: 20px; align-items: center;">
+                  <input type="button" id="submitFloat" class="cn button" value="Save Float Settings"
+                    onclick="enableFloat()" />
+                </div>
+              </div>
+            </div>
+
+
+
+            <!-- Master-Slave Configuration -->
+            <div class="i-c-c  cn pd2 collapsible-section collapsed" data-section-id="master-slave">
+              <div class="hc pr collapsible-header">
+                <h4>Master - Remote Control Configuration</h4>
+                <button type="button" class="help-i" data-help="settings.masterRemote" aria-label="Help"></button>
+              </div>
+              <div class="collapsible-content">
+                <div id="ms-con">
+                  <div style="margin:5px 30px 5px 20px; font-style:italic">
+                    Master-Remote configuration enables to setup a SuperSmart act as a Remote switch or a Master.
+
+                  </div>
+
+                  <div class="" style="margin: 10px 0px">
+                    <p class="pb10"><b>Select the Master / Remote switch mode:</b></p>
+
+                    <div class="pb2">
+                      <input type="radio" class="master-slave-mode" name="master-slave-mode" id="ms-non" value="0"
+                        checked />
+                      <label for="ms-non">Non Master - Non Remote switch device</label>
+                    </div>
+                    <div class="pb2">
+                      <input type="radio" class="master-slave-mode" name="master-slave-mode" id="ms-master" value="1" />
+                      <label for="ms-master">Master device</label>
+                    </div>
+                    <div class="pb2">
+                      <input type="radio" class="master-slave-mode" name="master-slave-mode" id="ms-slave" value="2" />
+                      <label for="ms-slave">Remote switch device</label>
+
+                      <div id="mstrUrlD"
+                        style="display: block; flex-direction: column; align-items: flex-start; width: 100%; max-width: 400px;margin-left:20px;">
+                        <p class="pb10" style="margin-top: 10px;">Select remote switching method:</p>
+                        <div class="pb5">
+                          <input type="checkbox" class="remoteMth" name="remoteMth" id="rs-mqtt" value="mqtt">
+                          <label for="rs-mqtt">MQTT Service</label>
+                        </div>
+                        <div class="pb5">
+                          <input type="checkbox" class="remoteMth" name="remoteMth" id="rs-local" value="local">
+                          <label for="rs-local">Local WiFi</label>
+                        </div>
+
+                        <div id="locWifiD"
+                          style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; margin: 10px 0px 10px 10px;">
+                          <label for="mstr_url" class="pb2">Master SuperSmart URL:</label>
+                          <input class="input-div light-pc" type="text" id="mstr_url" placeholder="Master Device URL "
+                            style="width: 92%;" required="">
+                          <!-- <p style="font-size: 0.75rem; margin-top: 2px; text-align: left; width: 92%; color:#bbb">Enter the URL of the
+                                                                  master SuperSmart </p> -->
+
+                          <label for="mstr_pin" class="pb2" style="margin-top: 5px;">Master SuperSmart PIN:</label>
+                          <div style="position: relative; width: 92%;">
+                            <input class="input-div" type="password" id="mstr_pin" maxlength="4" required="">
+                            <span class="view-password" onclick="viewPassword('mstr_pin')">
+                              <svg class="icon">
+                                <use href="#icon-eye"></use>
+                              </svg>
+                            </span>
+                          </div>
+                          <!-- <p style="font-size: 0.75rem; margin-top: 2px; text-align: left; width: 92%; color:#bbb">Enter the 4-digit PIN
+                                                                  configured on the master SuperSmart.</p> -->
+                        </div>
+                      </div>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; gap: 20px; align-items: center;">
+                      <input type="button" id="submitMasterSlave" class="cn button" value="Save Master-Slave Settings"
+                        onclick="submitMasterSlaveSettings()" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+      <div id="popup" style="
+                    display: none;
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    padding: 15px;
+                    background-color: #000;
+                    z-index: 9999;
+                    border: 2px solid black; 
+                    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); 
+                    color: white; 
+                    width: 250px; 
+
+                    
+                  ">
+        <span id="popupText">asdfsadf</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firmware upload loader overlay -->
+  <div id="fw-upload-overlay">
+    <div class="fw-spinner"></div>
+    <p>Uploading firmware, please wait...</p>
+  </div>
+</body>
+
+</html>

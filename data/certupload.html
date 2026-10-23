@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css?##VERSION##">
+  <link rel="stylesheet" href="css/adminstyle.css?##VERSION##">
+  <script src="scripts/common.js?##VERSION##" defer></script>
+  <script src="scripts/help.js?##VERSION##" defer></script>
+  <title>SwiGO Super Smart - Root CA Certificate</title>
+</head>
+<body>
+  <header class="nav-bar">
+    <div>
+      <a href="/" style="float:left;">
+        <img src="images/logo.png" class="logo" />
+      </a>
+    </div>
+    <br clear="all" />
+    <hr style="margin: 5px 0px; border-top: 1px solid #ccc;" />
+    <a href="/" class="switch-name-link" style="float:left;">
+      <h2 class="wpg-heading" style="display: block;" id="switchNameText">SuperSmart</h2>
+    </a>
+  </header>
+
+  <div class="page" style="margin-top:6.5rem;">
+    <main id="content">
+      <div class="power-settings-container padding-outer-2">
+        <div class="power-settings gap-flex">
+          <h4 class="main-heading" style="margin-bottom: 15px;">Root CA Certificate</h4>
+
+          <div class="wifi-settings i-c-c gap-flex cn pd2" style="margin-bottom: 15px;">
+            <div class="hc pr">
+              <h4 class="sh">Upload Certificate</h4>
+              <button type="button" class="help-i" data-help="cert.upload" aria-label="Help"></button></div>
+
+            <div style="margin:1rem 0;">
+              <span style="font-weight:600;">Select a certificate file (.pem / .crt / .cer)</span>
+              <div style="margin:0.75rem 0;">
+                <input type="file" id="certFile" accept=".pem,.crt,.cer,.txt,application/x-pem-file,application/x-x509-ca-cert">
+              </div>
+            </div>
+
+            <div style="margin:1rem 0;">
+              <span style="font-weight:600;">Or paste the certificate (PEM)</span>
+              <div style="margin:0.75rem 0;">
+                <textarea id="certText" class="input-div" rows="10" style="width:100%; font-family:monospace; font-size:0.85rem; box-sizing:border-box;"
+                  placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"></textarea>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+              <input type="button" class="cn button" value="Upload Certificate" onclick="uploadCert()">
+              <input type="button" class="cn button" value="Reset to Default" onclick="resetCert()"
+                style="background:#777;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 15px; background-color: #000; z-index: 9999; border: 2px solid black; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); color: white; width: 250px;">
+        <span id="popupText"></span>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function looksLikePem(pem) {
+      return pem.length >= 200 && pem.length <= 8192 &&
+        pem.indexOf("-----BEGIN CERTIFICATE-----") >= 0 &&
+        pem.indexOf("-----END CERTIFICATE-----") >= 0;
+    }
+
+    function sendCert(pem) {
+      fetchWT("/api/setRootCACert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cert: pem })
+      })
+      .then(function (response) {
+        if (!response.ok) {
+          return response.text().then(function (msg) { throw new Error(msg); });
+        }
+        return response.text();
+      })
+      .then(function (msg) {
+        displaySuccess(msg || "Root CA updated");
+      })
+      .catch(function (error) {
+        displayFailure(error.message || "Failed to upload certificate");
+      });
+    }
+
+    function uploadCert() {
+      var fileInput = el("certFile");
+      var pasted = el("certText").value.trim();
+
+      if (fileInput.files && fileInput.files.length > 0) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var pem = (e.target.result || "").trim();
+          if (!looksLikePem(pem)) {
+            displayFailure("Selected file is not a valid PEM certificate");
+            return;
+          }
+          sendCert(pem);
+        };
+        reader.onerror = function () {
+          displayFailure("Could not read the selected file");
+        };
+        reader.readAsText(fileInput.files[0]);
+        return;
+      }
+
+      if (pasted) {
+        if (!looksLikePem(pasted)) {
+          displayFailure("Pasted text is not a valid PEM certificate");
+          return;
+        }
+        sendCert(pasted);
+        return;
+      }
+
+      displayFailure("Choose a certificate file or paste a PEM certificate");
+    }
+
+    function resetCert() {
+      if (!confirm("Revert to the embedded default root CA certificate?")) {
+        return;
+      }
+      fetchWT("/api/setRootCACert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reset: true })
+      })
+      .then(function (response) {
+        if (!response.ok) {
+          return response.text().then(function (msg) { throw new Error(msg); });
+        }
+        return response.text();
+      })
+      .then(function (msg) {
+        el("certFile").value = "";
+        el("certText").value = "";
+        displaySuccess(msg || "Root CA reverted to default");
+      })
+      .catch(function (error) {
+        displayFailure(error.message || "Failed to reset certificate");
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      fetchWT("/dn.htm").then(function (response) {
+        var v = response.headers.get("switchName");
+        if (v) {
+          var e = document.getElementById("switchNameText");
+          if (e) {
+            e.innerText = v;
+            document.title = v + " - SwiGO SuperSmart";
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

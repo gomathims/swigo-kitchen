@@ -1,0 +1,128 @@
+type: vertical-stack
+cards:
+  - type: conditional
+    conditions:
+      - entity: switch.sumpmotor_relaystatus
+        state: "off"
+    card:
+      type: horizontal-stack
+      cards:
+        - type: button
+          show_name: true
+          show_icon: true
+          name: 15 Mins
+          icon: mdi:timer-outline
+          tap_action:
+            action: call-service
+            service: mqtt.publish
+            service_data:
+              topic: homeassistant/switch/sumpmotor_6708/set
+              payload: "{\"method\":\"turnOn\", \"durationHours\":0, \"durationMinutes\":15 }"
+              qos: 0
+          show_state: true
+          icon_height: 20px
+        - type: button
+          show_name: true
+          show_icon: true
+          name: 30 Mins
+          icon: mdi:timer-outline
+          tap_action:
+            action: call-service
+            service: mqtt.publish
+            service_data:
+              topic: homeassistant/switch/sumpmotor_6708/set
+              payload: "{\"method\":\"turnOn\", \"durationHours\":0, \"durationMinutes\":30 }"
+              qos: 0
+          show_state: true
+          icon_height: 20px
+        - type: button
+          show_name: true
+          show_icon: true
+          name: 45 Mins
+          icon: mdi:timer-outline
+          tap_action:
+            action: call-service
+            service: mqtt.publish
+            service_data:
+              topic: homeassistant/switch/sumpmotor_6708/set
+              payload: "{\"method\":\"turnOn\", \"durationHours\":0, \"durationMinutes\":45 }"
+              qos: 0
+          show_state: true
+          icon_height: 20px
+        - type: button
+          show_name: true
+          show_icon: true
+          name: 1 Hour
+          icon: mdi:timer-outline
+          tap_action:
+            action: call-service
+            service: mqtt.publish
+            service_data:
+              topic: homeassistant/switch/sumpmotor_6708/set
+              payload: "{\"method\":\"turnOn\", \"durationHours\":1, \"durationMinutes\":0 }"
+              qos: 0
+          show_state: true
+          icon_height: 20px
+  - type: entities
+    title: Sumpmotor Duration
+    entities:
+      - entity: number.sumpmotor_6708_durationhours
+        name: Hours
+      - entity: number.sumpmotor_6708_durationminutes
+        name: Minutes
+    show_header_toggle: false
+  - type: conditional
+    conditions:
+      - entity: switch.sumpmotor_relaystatus
+        state: "on"
+    card:
+      type: horizontal-stack
+      cards:
+        - type: custom:mushroom-template-card
+          primary: >
+            {{ (states('sensor.sumpmotor_remainingduration') | int |
+            timestamp_custom('%H:%M:%S', false)) }} 
+          icon: mdi:timer
+          layout: horizontal
+          alignment: center
+          card_mod:
+            style: |
+              ha-state-icon {
+                {% set age = now().timestamp() -
+                  states.sensor.sumpmotor_remainingduration.last_updated.timestamp() %}
+                {% if age > 30 %}
+                  animation: blink 1.2s linear infinite;
+                  color: var(--warning-color);
+                {% else %}
+                  animation: none;
+                {% endif %}
+              }
+
+              @keyframes blink {
+                0%   { opacity: 1; }
+                50%  { opacity: 0.2; }
+                100% { opacity: 1; }
+              }
+        - type: button
+          show_name: false
+          show_icon: true
+          name: Switch Off
+          icon: mdi:timer-cancel
+          tap_action:
+            action: call-service
+            service: mqtt.publish
+            service_data:
+              topic: homeassistant/switch/sumpmotor_6708/set
+              payload: "{\"method\":\"turnOff\"}"
+              qos: 0
+          show_state: true
+          icon_height: 20px
+  - type: entities
+    title: Sump Motor
+    entities:
+      - entity: switch.sumpmotor_relaystatus
+      - entity: sensor.sumpmotor_current
+      - entity: sensor.sumpmotor_voltage
+      - entity: sensor.sumpmotor_power
+      - entity: sensor.sumpmotor_energy
+      - entity: sensor.sumpmotor_cumenergy

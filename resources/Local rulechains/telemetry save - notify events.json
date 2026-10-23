@@ -1,0 +1,232 @@
+{
+  "ruleChain": {
+    "name": "telemetry save - notify events",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "additionalInfo": {
+      "description": "General rulechain to save data and send remote switching RPC to master and Master publishing relayStatus to remotes"
+    }
+  },
+  "metadata": {
+    "version": 32,
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Process only active event transmissions",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1780659537009
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "TBEL",
+          "jsScript": "return msg.temperature > 20;",
+          "tbelScript": "return msg.eventMessage != null && msg.eventMessage.length() > 0\n    && msg.relayStatus != null\n    && msg.resync != true;"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 253,
+          "layoutY": 227
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "message is fresh",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1779180424029
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "TBEL",
+          "jsScript": "return {msg: msg, metadata: metadata, msgType: msgType};",
+          "tbelScript": "var DEDUP_MS = 1000;\nvar newState = msg.relayStatus;\nvar now = new Date().getTime();\nvar onTs  = metadata.ss_lastSwitchingOnNotifyTs  != null ? Long.parseLong(metadata.ss_lastSwitchingOnNotifyTs)  : 0;\nvar offTs = metadata.ss_lastSwitchingOffNotifyTs != null ? Long.parseLong(metadata.ss_lastSwitchingOffNotifyTs) : 0;\n\nmsg.lastSwitchingOnNotifyTs  = onTs;\nmsg.lastSwitchingOffNotifyTs = offTs;\nmsg.shouldNotify = \"false\";\n\nvar lastTs = newState ? onTs : offTs;\nif ((now - lastTs) > DEDUP_MS) {\n    msg.shouldNotify = \"true\";\n    var deviceLabel = (metadata.cs_deviceName != null &&  metadata.cs_deviceName != \"\") ? metadata.cs_deviceName : metadata.deviceType+\" Device\";\n    var suffix = \": \" + msg.eventMessage;\n    if (newState == true) {\n        msg.category = \"switching.on\";\n        msg.title    = \"Device turned ON\";\n        msg.body     = deviceLabel + suffix;\n        msg.lastSwitchingOnNotifyTs = now;\n    } else {\n        msg.category = \"switching.off\";\n        var em = msg.eventMessage != null ? msg.eventMessage.toLowerCase() : \"\";\n        if (em.indexOf(\"stop\") >= 0) \n            msg.title = \"Device turned OFF\";\n        else \n            msg.title    = \"Device remain OFF\";\n        msg.body     = deviceLabel + suffix;\n        msg.lastSwitchingOffNotifyTs = now;\n    }\n}\n\n// return {msg: msg, metadata: metadata, msgType: msg.msgType};\nreturn {msg: msg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};\n"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 782,
+          "layoutY": 370
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "add last notification times",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1780659537009
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 1,
+        "configuration": {
+          "tellFailureIfAbsent": false,
+          "fetchTo": "METADATA",
+          "clientAttributeNames": [
+            "deviceName"
+          ],
+          "sharedAttributeNames": [],
+          "serverAttributeNames": [
+            "lastSwitchingOnNotifyTs",
+            "lastSwitchingOffNotifyTs"
+          ],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 450,
+          "layoutY": 349
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "save last notification time",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1779173322786
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 3,
+        "configuration": {
+          "processingSettings": {
+            "attributes": {
+              "type": "ON_EVERY_MESSAGE"
+            },
+            "webSockets": {
+              "type": "ON_EVERY_MESSAGE"
+            },
+            "calculatedFields": {
+              "type": "ON_EVERY_MESSAGE"
+            },
+            "type": "ADVANCED"
+          },
+          "scope": "SERVER_SCOPE",
+          "notifyDevice": false,
+          "sendAttributesUpdatedNotification": false,
+          "updateAttributesOnlyOnValueChange": true
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 904,
+          "layoutY": 479
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "only to be notified",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1780659537009
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "TBEL",
+          "jsScript": "return msg.temperature > 20;",
+          "tbelScript": "return msg.shouldNotify == \"true\";"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 798,
+          "layoutY": 607
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainInputNode",
+        "name": "execute rule chain",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1780659537009
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 1,
+        "configuration": {
+          "forwardMsgToDefaultRuleChain": false,
+          "ruleChainId": "9f795420-4f76-11f1-bbcc-37490676bf9f"
+        },
+        "additionalInfo": {
+          "description": "call despatcher",
+          "layoutX": 1128,
+          "layoutY": 606
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "change the nodetype back",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1780659537009
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "TBEL",
+          "jsScript": "return {msg: msg, metadata: metadata, msgType: msgType};",
+          "tbelScript": "return {msg: msg, metadata: metadata, msgType: \"POST_TELEMETRY_REQUEST\"};"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 926,
+          "layoutY": 720
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 2,
+        "type": "True"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 2,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 4,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 4,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 6,
+        "type": "True"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 5,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

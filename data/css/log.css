@@ -1,0 +1,294 @@
+/* Tab Container Styles */
+#tab-container {
+  display: flex;
+}
+
+.tab {
+  padding: 10px 20px;
+  text-align: center;
+  flex: 1; 
+  cursor: pointer;
+  font-weight: 2rem;
+  color: #bbb;
+}
+
+.tab + .tab {
+  position: relative;
+}
+
+.tab + .tab::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 50%;
+  background-color: #ccc; 
+}
+
+.tab.active {
+  color: #000;
+}
+
+.tab-content {
+  display: none;
+  border-top: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Filter Header */
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 2px;
+
+}
+
+.filter-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.filter-date-range {
+  font-size: 14px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.filter-count {
+  font-size: 12px;
+  color: #6c757d;
+}
+.accordion-button {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+.accordion-button.open {
+  transform: rotate(-90deg);
+}
+/* .filter-toggle {
+  background: #468a42;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.filter-toggle:hover {
+  background: #3a7237;
+  transform: scale(1.05);
+}
+
+.filter-toggle:active {
+  transform: scale(0.95);
+}
+
+.filter-toggle i {
+  font-size: 16px;
+} */
+
+/* Date Filter Container */
+.date-filter-container {
+  background: #f8f9fa !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  margin-bottom: 8px !important;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+}
+
+.date-filter-container.expanded {
+  max-height: 300px;
+  padding: 15px !important;
+  margin-bottom: 20px !important;
+  overflow: scroll;
+}
+
+.date-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.date-filter-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.date-input-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 150px;
+  justify-content: flex-end;
+}
+
+.date-input-group label {
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 3px;
+  font-size: 14px;
+}
+
+.date-input-group input,
+.date-input-group select {
+  padding: 5px 5px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  box-sizing: border-box;
+}
+
+.date-input-group input:focus,
+.date-input-group select:focus {
+  border-color: #468a42;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(70, 138, 66, 0.25);
+}
+
+.date-input-group button {
+  padding: 5px 10px;
+  background: #468a42;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.15s ease-in-out;
+
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+.date-input-group button:hover {
+  background: #3a7237;
+}
+
+.date-input-group button:active {
+  background: #2d5a2b;
+}
+
+.date-input-group button[onclick*="clearDateFilter"] {
+  background: #6c757d;
+}
+
+.date-input-group button[onclick*="clearDateFilter"]:hover {
+  background: #5a6268;
+}
+
+.date-input-group button[onclick*="clearDateFilter"]:active {
+  background: #495057;
+}
+
+/* Load More Button */
+.load-more-container {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.load-more-btn {
+  padding: 10px 20px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.load-more-btn:hover {
+  background: #218838;
+}
+
+.load-more-btn:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Pagination Styles */
+.pagination-container {
+  display: none;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.pagination-container button {
+  padding: 6px 12px;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.15s ease-in-out, opacity 0.15s ease-in-out;
+}
+
+.pagination-container button:hover:not(:disabled) {
+  background: #5a6268;
+}
+
+.pagination-container button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+#pageInfo {
+  font-size: 14px;
+  color: #495057;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .filter-header {
+    
+    align-items: stretch;
+  }
+  
+  .filter-toggle {
+    align-self: center;
+  }
+  
+  .date-filter-container > div:first-child {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .date-input-group {
+    min-width: auto;
+    margin-bottom: 5px;
+  }
+  
+  .date-input-group:last-child {
+    margin-bottom: 0;
+  }
+} 

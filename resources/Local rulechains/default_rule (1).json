@@ -1,0 +1,501 @@
+{
+  "ruleChain": {
+    "name": "Default rule",
+    "type": "CORE",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null,
+    "additionalInfo": {
+      "description": "General rulechain to save data"
+    }
+  },
+  "metadata": {
+    "version": 63,
+    "firstNodeIndex": 1,
+    "nodes": [
+      {
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgTimeseriesNode",
+        "name": "save timeseries data",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 1,
+        "configuration": {
+          "defaultTTL": 0,
+          "useServerTs": false,
+          "processingSettings": {
+            "type": "ON_EVERY_MESSAGE"
+          }
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 708,
+          "layoutY": 83
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbMsgTypeSwitchNode",
+        "name": "message type",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "version": 0
+        },
+        "additionalInfo": {
+          "description": "time series need to save and RPC need to be sent ",
+          "layoutX": 131,
+          "layoutY": 296
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.rpc.TbSendRPCRequestNode",
+        "name": "Send RPC call with attributes",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "timeoutInSeconds": 60
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1050,
+          "layoutY": 220
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "add duration parameters in message",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "if (msg.method==\"turnOn\") {\n    var durationHours = metadata.shared_durationHours?metadata.shared_durationHours:0;// Shared attribute from metadata\n    var durationMinutes = metadata.shared_durationMinutes?metadata.shared_durationMinutes:0;\n    if (durationHours==0 && durationMinutes==0)\n        throw \"Invalid duration\";\nvar newMsg = {\n    method: msg.method,\n    params: {\n        durationHours: durationHours, \n        durationMinutes: durationMinutes\n    }\n};\nreturn { msg: newMsg, metadata: metadata, msgType: msgType };\n}\nelse return {msg:msg, metadata: metadata, msgType: msgType };",
+          "tbelScript": "return {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 770,
+          "layoutY": 321
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "fetch the originating device attributes",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 1,
+        "configuration": {
+          "tellFailureIfAbsent": true,
+          "fetchTo": "METADATA",
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [
+            "durationHours",
+            "durationMinutes"
+          ],
+          "serverAttributeNames": [],
+          "latestTsKeyNames": [],
+          "getLatestValueWithTs": false
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 828,
+          "layoutY": 187
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Connect event processing",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "var newMsg = {\n  active: true,\n  lastConnectTime: new Date().getTime()\n};\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};",
+          "tbelScript": "var newMsg = {\n  active: true,\n  lastConnectTime: new Date().getTime()\n};\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};"
+        },
+        "additionalInfo": {
+          "description": "Connect event processing - set active, lastConnectTime ",
+          "layoutX": 535,
+          "layoutY": 362
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "Disconnect event processing",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "var newMsg = {\n  active: false,\n  lastDisconnectTime: new Date().getTime()\n};\nreturn {msg: newMsg, metadata: metadata, msgType: msgType};",
+          "tbelScript": "return msg.temperature > 20;"
+        },
+        "additionalInfo": {
+          "description": "Disconnect event processing - update active, lastDisconnectTime",
+          "layoutX": 438,
+          "layoutY": 443
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Save connect attributes status",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 3,
+        "configuration": {
+          "processingSettings": {
+            "type": "ON_EVERY_MESSAGE"
+          },
+          "scope": "SERVER_SCOPE",
+          "notifyDevice": false,
+          "sendAttributesUpdatedNotification": false,
+          "updateAttributesOnlyOnValueChange": true
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 839,
+          "layoutY": 487
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "save attributes when it is not readonly",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 3,
+        "configuration": {
+          "processingSettings": {
+            "attributes": {
+              "type": "DEDUPLICATE",
+              "deduplicationIntervalSecs": 60
+            },
+            "webSockets": {
+              "type": "ON_EVERY_MESSAGE"
+            },
+            "calculatedFields": {
+              "type": "ON_EVERY_MESSAGE"
+            },
+            "type": "ADVANCED"
+          },
+          "scope": "SERVER_SCOPE",
+          "notifyDevice": false,
+          "sendAttributesUpdatedNotification": true,
+          "updateAttributesOnlyOnValueChange": false
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 217,
+          "layoutY": 706
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "Check for read only attributes",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1779029145204
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "JS",
+          "jsScript": "// Check if the update request contains x or y\n// {\n//   \"entityId\": \"67175181-4078-11f0-8dcc-977622718fb8\",\n//   \"scope\": \"SERVER_SCOPE\",\n//   \"attributes\": {\n//     \"Mac_id\": \"CC:BA:97:36:67:88\"\n//   }\n// }\n//if (msg.attributes.Mac_id !== undefined || msg.attributes.Batch_code !== undefined) {\n    return {\n        msg: {},\n        metadata: { error: \"Cannot modify attributes Mac_id or Batch_code\" },\n        msgType: \"FAILURE\"\n    }; // Block update\n//}\n// Allow other attribute updates\n// return {\n//     msg: msg,\n//     metadata: metadata,\n//     msgType: \"SUCCESS\"\n// };",
+          "tbelScript": "return {msg: msg, metadata: metadata, msgType: msgType};"
+        },
+        "additionalInfo": {
+          "description": "checks attributes being modified",
+          "layoutX": 22,
+          "layoutY": 604
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "Add default runtime",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 1,
+        "configuration": {
+          "tellFailureIfAbsent": false,
+          "fetchTo": "METADATA",
+          "clientAttributeNames": [],
+          "latestTsKeyNames": [],
+          "serverAttributeNames": [],
+          "sharedAttributeNames": [
+            "durationHours",
+            "durationMinutes"
+          ],
+          "getLatestValueWithTs": false
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 399,
+          "layoutY": 32
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.flow.TbRuleChainOutputNode",
+        "name": "RPC call not valid case",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "version": 0
+        },
+        "additionalInfo": {
+          "description": "RPC call not valid case",
+          "layoutX": 1073,
+          "layoutY": 365
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "save attributes",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 3,
+        "configuration": {
+          "processingSettings": {
+            "attributes": {
+              "type": "ON_EVERY_MESSAGE"
+            },
+            "webSockets": {
+              "type": "ON_EVERY_MESSAGE"
+            },
+            "calculatedFields": {
+              "type": "ON_EVERY_MESSAGE"
+            },
+            "type": "ADVANCED"
+          },
+          "scope": "CLIENT_SCOPE",
+          "notifyDevice": false,
+          "sendAttributesUpdatedNotification": false,
+          "updateAttributesOnlyOnValueChange": false
+        },
+        "additionalInfo": {
+          "description": "save client attributes",
+          "layoutX": 671,
+          "layoutY": 7
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.filter.TbJsFilterNode",
+        "name": "User alertPreferences updates",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1779029083145
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "TBEL",
+          "jsScript": "return msg.temperature > 20;",
+          "tbelScript": "return metadata.scope == \"SERVER_SCOPE\" && msg.alertPreferences != null;\n"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 710,
+          "layoutY": 812
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbChangeOriginatorNode",
+        "name": "Customer of user",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1779029083145
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "originatorSource": "CUSTOMER",
+          "relationsQuery": {
+            "direction": "FROM",
+            "maxLevel": 1,
+            "filters": [
+              {
+                "relationType": "Contains",
+                "entityTypes": [],
+                "negate": false
+              }
+            ],
+            "fetchLastLevelOnly": false
+          },
+          "entityType": null,
+          "entityNamePattern": null
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 728,
+          "layoutY": 671
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.telemetry.TbMsgAttributesNode",
+        "name": "Mirror alertPreferences to customer",
+        "debugSettings": {
+          "failuresEnabled": false,
+          "allEnabled": false,
+          "allEnabledUntil": 1779035581874
+        },
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 3,
+        "configuration": {
+          "processingSettings": {
+            "type": "ON_EVERY_MESSAGE"
+          },
+          "scope": "SERVER_SCOPE",
+          "notifyDevice": false,
+          "sendAttributesUpdatedNotification": false,
+          "updateAttributesOnlyOnValueChange": true
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1284,
+          "layoutY": 669
+        }
+      },
+      {
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "change message type to post attributes",
+        "debugSettings": null,
+        "singletonMode": false,
+        "queueName": null,
+        "configurationVersion": 0,
+        "configuration": {
+          "scriptLang": "TBEL",
+          "jsScript": "return {msg: msg, metadata: metadata, msgType: msgType};",
+          "tbelScript": "// alertPreferences arrives as object or stringified JSON depending on caller\nvar prefs = msg.alertPreferences;\nif (prefs != null && prefs instanceof String) {\n    prefs = JSON.parse(prefs);\n}\n\nif (prefs != null && prefs.categories != null) {\n    var c = prefs.categories;\n    var v = c[\"fault.voltage\"];\n    var i = c[\"fault.current\"];\n    var o = c[\"device.offline\"];\n\n    if (v != null && v.durationMinutes != null) msg.voltageFaultDurationMinutes = v.durationMinutes;\n    if (i != null && i.durationMinutes != null) msg.currentFaultDurationMinutes = i.durationMinutes;\n    if (o != null && o.durationMinutes != null) msg.offlineDurationMinutes      = o.durationMinutes;\n}\n\nreturn {msg: msg, metadata: metadata, msgType: \"POST_ATTRIBUTES_REQUEST\"};\n"
+        },
+        "additionalInfo": {
+          "description": "",
+          "layoutX": 1015,
+          "layoutY": 671
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 1,
+        "toIndex": 0,
+        "type": "Post telemetry"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 4,
+        "type": "RPC Request to Device"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 5,
+        "type": "Connect Event"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 6,
+        "type": "Disconnect Event"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 9,
+        "type": "Attributes Deleted"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 9,
+        "type": "Attributes Updated"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 10,
+        "type": "Entity Created"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 12,
+        "type": "Post attributes"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 13,
+        "type": "Attributes Deleted"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 13,
+        "type": "Attributes Updated"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 2,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 3,
+        "toIndex": 11,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 3,
+        "type": "Failure"
+      },
+      {
+        "fromIndex": 4,
+        "toIndex": 3,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 5,
+        "toIndex": 7,
+        "type": "True"
+      },
+      {
+        "fromIndex": 6,
+        "toIndex": 7,
+        "type": "True"
+      },
+      {
+        "fromIndex": 9,
+        "toIndex": 8,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 13,
+        "toIndex": 14,
+        "type": "True"
+      },
+      {
+        "fromIndex": 14,
+        "toIndex": 16,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 16,
+        "toIndex": 15,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

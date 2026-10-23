@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css?##VERSION##" />
+    <link rel="stylesheet" href="css/log.css?##VERSION##" />
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <script src="scripts/common.js?##VERSION##" defer></script>
+    <script src="scripts/energy_logparsing.js?##VERSION##" defer></script>
+    <title>SwiGO Super Smart</title>
+    <style>
+      #tab-container {
+        display: flex;
+      }
+      .tab {
+          padding: 10px 20px;
+          text-align: center;
+          flex: 1;
+          cursor: pointer;
+          font-weight: 2rem;
+          color: #bbb;
+      }
+      .tab + .tab {
+        position: relative;
+      }
+      .tab + .tab::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 50%;
+        background-color: #ccc;
+      }
+      .tab.active {
+          color: #000;
+      }
+      .tab-content {
+          display: none;
+          border-top: none;
+      }
+      .tab-content.active {
+          display: block;
+      }
+      .date-error {
+          color: rgb(210, 30, 30);
+          font-size: 12px;
+          margin-top: 5px;
+      }
+
+      /* Override default table borders - v9 style bottom-border only */
+      .log-content table { width: 100%; border-collapse: collapse; border: none; }
+      .log-content table td,
+      .log-content table th { border: none; border-bottom: 1px solid rgba(0, 0, 0, 0.08); padding: 10px 4px; vertical-align: baseline; font-size: 0.85rem; }
+      .log-content table tr:last-child td { border-bottom: none; }
+      .log-content table td:first-child { color: #888; white-space: nowrap; }
+      .log-content table td:nth-child(2) { color: #888; white-space: nowrap; }
+      .log-content table td:nth-child(3) { color: #555; }
+      .log-content table td:last-child { color: #333; }
+
+      /* Page background and section styling */
+      body { background: #f5f5f5; max-width: 40rem; margin: 0 auto; width: 100% !important; }
+      header.nav-bar { width: 100% !important; max-width: 40rem !important; left: 50% !important; transform: translateX(-50%) !important; box-sizing: border-box; }
+      .log-full.padding-outer {
+        background: #FAFAFA;
+        border: 1px solid rgba(0, 66, 37, 0.18);
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.09);
+        padding: 14px 16px;
+      }
+      .log-header h3 { font-size: 15px; font-weight: 700; color: #333; }
+
+      /* Filter area styling */
+      .filter-header { background: transparent; border-radius: 6px; padding: 6px 0; }
+      .filter-date-range { font-size: 13px; color: #555; }
+      .filter-count, .filter-total-energy, .filter-total-runtime { font-size: 12px; color: #888; }
+
+      .date-filter-container.expanded { background: #fff !important; border-color: rgba(0, 66, 37, 0.12) !important; border-radius: 8px !important; }
+      .date-input-group label { font-size: 13px; color: #555; }
+      .date-input-group input,
+      .date-input-group select { font-size: 13px; border-radius: 6px; border: 1px solid #ddd; }
+
+      /* Pagination */
+      .pagination-container { margin: 10px 0; }
+      .pagination-container button { border-radius: 6px; font-size: 13px; }
+      #pageInfo, #bottomPageInfo { font-size: 13px; }
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+      <header class="nav-bar" >
+        <div>
+          <a href="/" style="float:left;">
+            <img src="images/logo.png" class="logo" />
+          </a>
+        </div>
+        <br clear="all" />
+        <hr style="margin: 5px 0px; border-top: 1px solid #ccc;" />
+  
+        <a href="/" class="switch-name-link" style="float:left;">
+          <h2 class="wpg-heading" style="display: block; margin-bottom: 10px;" id="switchNameText">SuperSmart</h2>
+        </a>
+      </header>
+
+      <div class="page" style="margin-top:6.5rem;">
+        <main id="content">
+          <div class="home-container gap-flex content-div active" id="menu-1">
+            
+            <div class="log-full padding-outer">
+              <div class="log-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="margin: 0;">Energy Usage Logs</h3>
+                <button onclick="refreshEnergyLogs()" style="background: none; border: none; cursor: pointer;">
+                  <img src="images/reload.png" alt="Refresh" />
+                </button>
+              </div>
+              
+              <!-- Filter Header -->
+              <div class="filter-header">
+                <div class="filter-info">
+                  <div class="filter-date-range" id="filterDateRange">All logs</div>
+                  <div class="filter-count" id="filterCount">Total logs: 0</div>
+                  <div class="filter-total-energy" id="filterTotalEnergy">Total Energy: 0.000 kWh</div>
+                  <div class="filter-total-runtime" id="filterTotalRuntime">Total Runtime: 0h 0m</div>
+                </div>
+                <button class="accordion-button" onclick="toggleFilter()" id="filterToggle" style="height: 20px; padding: 0; border: none; background: none;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+                </button>
+              </div>
+              
+              <!-- Date Filter Controls -->
+              <div class="date-filter-container" id="dateFilterContainer">
+                <div class="date-filter-row">
+                  <div class="date-input-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" onchange="validateDates()">
+                    <div id="erSD" class="date-error" style="display: none;"></div>
+                  </div>
+                  <div class="date-input-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" onchange="validateDates()">
+                    <div id="erED" class="date-error" style="display: none;"></div>
+                  </div>
+                  <div class="date-input-group">
+                    <label for="logLimit">Logs per page:</label>
+                    <select id="logLimit">
+                      <option value="50">50</option>
+                      <option value="100" selected>100</option>
+                      <option value="200">200</option>
+                      <option value="500">500</option>
+                      <option value="1000">1000</option>
+                    </select>
+                  </div>
+                  <div class="date-input-group">
+                    <button onclick="applyDateFilter()" id="applyFilterBtn">Apply Filter</button>
+                  </div>
+                  <div class="date-input-group">
+                    <button onclick="clearDateFilter()">Clear Filter</button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Pagination Controls -->
+              <div class="pagination-container" id="paginationContainer" style="display: none;">
+                <button onclick="goToPreviousPage()" id="prevPageBtn">‹</button>
+                <span id="pageInfo">Page 1 of 1</span>
+                <button onclick="goToNextPage()" id="nextPageBtn">›</button>
+              </div>
+              
+              <div id="loading-indicator" style="display: none; text-align: center; padding: 20px;">
+                <p>Loading energy logs...</p>
+              </div>
+              <div class="log-content cn"></div>
+
+              <!-- Bottom Pagination Controls -->
+              <div class="pagination-container bottom-pagination" id="bottomPaginationContainer" style="display: none; margin-top: 20px;">
+                <button onclick="goToPreviousPage()" id="bottomPrevPageBtn">‹</button>
+                <span id="bottomPageInfo">Page 1 of 1</span>
+                <button onclick="goToNextPage()" id="bottomNextPageBtn">›</button>
+              </div>
+            </div>
+
+          </div>
+        </main>
+        <script>
+                // Global variables for available dates
+              
+                let minDate = null;
+                let maxDate = null;
+
+                document.addEventListener("DOMContentLoaded", () => {
+                  fetchWT("/dn.htm").then((response) => {
+                    const v = response.headers.get("switchName");
+                    if (v) {
+                      const e = _qs("#switchNameText");
+                      if (e) {
+                        e.innerText = v;
+                        document.title = v + " - SwiGO SuperSmart";
+                      }
+                    }
+                  });
+                  // loadEnergyLogs();
+                  // // Initialize date pickers with default values (last 7 days)
+                  // const today = new Date();
+                  // const lastWeek = new Date(today.getTime() - (7 * 24 * 60 * 60 * 1000));
+                  
+                  // const iSD = el('startDate');
+                  // const iED = el('endDate');
+                  
+                  // if (iSD && iED) {
+                  //   iSD.value = lastWeek.toISOString().split('T')[0];
+                  //   iED.value = today.toISOString().split('T')[0];
+                  // }
+                  // filterEnergyLogsByDate(iSD.value, iED.value);
+
+                });
+
+                // Extract available dates from energy records
+                function extractAvailableDates() {
+                    if (!allEnergyRecords || allEnergyRecords.length === 0) {
+                        return;
+                    }
+                    
+                   
+                    minDate = null;
+                    maxDate = null;
+                    
+                    allEnergyRecords.forEach(log => {
+                        const logDate = new Date(log.startDate);
+                        const dateString = logDate.toISOString().split('T')[0];
+                        
+                        if (!minDate || logDate < minDate) {
+                            minDate = new Date(logDate);
+                        }
+                        if (!maxDate || logDate > maxDate) {
+                            maxDate = new Date(logDate);
+                        }
+                    });
+                    
+                    // Update date input constraints
+                    updateDateInputConstraints();
+                }
+                
+                // Update date input min/max attributes
+                function updateDateInputConstraints() {
+                    const iSD = el('startDate');
+                    const iED = el('endDate');
+                    
+                    if (minDate && maxDate) {
+                        const minDateString = minDate.toISOString().split('T')[0];
+                        const maxDateString = maxDate.toISOString().split('T')[0];
+                        
+                        iSD.min = minDateString;
+                        iSD.max = maxDateString;
+                        iED.min = minDateString;
+                        iED.max = maxDateString;
+                    }
+                }
+                
+                // Validate date selection
+                function validateDates() {
+                    const iSD = el('startDate');
+                    const iED = el('endDate');
+                    const erSD = el('erSD');
+                    const erED = el('erED');
+                    const applyFilterBtn = el('applyFilterBtn');
+                    
+                    let hasError = false;
+                    
+                    // Clear previous errors
+                    erSD.style.display = 'none';
+                    erED.style.display = 'none';
+                    erSD.textContent = '';
+                    erED.textContent = '';
+                    
+                    const startDate = iSD.value;
+                    const endDate = iED.value;
+                    
+                    if (startDate && endDate) {
+                        if (new Date(startDate) > new Date(endDate)) {
+                            erED.textContent = 'End date must be after start date';
+                            erED.style.display = 'block';
+                            hasError = true;
+                        }
+                    }
+                    // Check the date part of the start date is not less than the min date
+                    if (startDate && startDate.split('T')[0] < minDate.toISOString().split('T')[0]) {
+                        erSD.textContent = 'No data available for this date';
+                        erSD.style.display = 'block';
+                        hasError = true;
+                    }
+                    
+                    if (endDate && endDate.split('T')[0] > maxDate.toISOString().split('T')[0]) {
+                        erED.textContent = 'No data available for this date';
+                        erED.style.display = 'block';
+                        hasError = true;
+                    }
+                    
+                    // Disable apply button if there are errors
+                    applyFilterBtn.disabled = hasError;
+                }
+
+                function refreshEnergyLogs() {
+                  const loadingIndicator = el('loading-indicator');
+                  const logContent = document.querySelector('.log-content');
+                  
+                  // Show loading indicator
+                  loadingIndicator.style.display = 'block';
+                  logContent.innerHTML = '';
+                  
+                  // Reset global variables
+                  allEnergyRecords = [];
+                  filteredEnergyRecords = [];
+                  displayedEnergyRecords = [];
+                  currentEnergyPage = 1;
+                  
+                  // Hide pagination during refresh
+                  const pagination = el('paginationContainer');
+                  const bottomPagination = el('bottomPaginationContainer');
+                  if (pagination) pagination.style.display = 'none';
+                  if (bottomPagination) bottomPagination.style.display = 'none';
+                  
+                  // Reload energy logs
+                  loadEnergyLogs();
+                }
+                
+                // Global variables for pagination and filtering
+                if (typeof allEnergyRecords === 'undefined') {
+                    window.allEnergyRecords = [];
+                    window.currentEnergyPage = 1;
+                    window.energyLogsPerPage = 100;
+                    window.filteredEnergyRecords = [];
+                    window.displayedEnergyRecords = [];
+                }
+                
+                // Toggle filter expansion
+                function toggleFilter() {
+                    const filterContainer = el('dateFilterContainer');
+                    const filterToggle = el('filterToggle');
+                    
+                    if (filterContainer.classList.contains('expanded')) {
+                        filterContainer.classList.remove('expanded');
+                        filterToggle.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>';
+                    } else {
+                        filterContainer.classList.add('expanded');
+                        filterToggle.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
+                    }
+                }
+                
+                // Filter energy logs by date range with timezone handling
+                function filterEnergyLogsByDate(startDate, endDate) {
+                    if (!startDate && !endDate) {
+                        filteredEnergyRecords = [...allEnergyRecords];
+                    } else {
+                        // Get local timezone offset in minutes
+                        const timezoneOffset = new Date().getTimezoneOffset();
+                        
+                        filteredEnergyRecords = allEnergyRecords.filter(log => {
+                            const logDate = log.startDate;
+                            let includeLog = true;
+                            
+                            if (startDate) {
+                                // Create start date in local timezone
+                                const start = new Date(startDate + "T00:00:00");
+                                // Adjust for timezone offset to compare with UTC log dates
+                                const startUTC = new Date(start.getTime() - (timezoneOffset * 60 * 1000));
+                                if (logDate < startUTC) {
+                                    includeLog = false;
+                                }
+                            }
+                            
+                            if (endDate && includeLog) {
+                                // Create end date in local timezone
+                                const end = new Date(endDate + "T23:59:59.999");
+                                // Adjust for timezone offset to compare with UTC log dates
+                                const endUTC = new Date(end.getTime() - (timezoneOffset * 60 * 1000));
+                                if (logDate > endUTC) {
+                                    includeLog = false;
+                                }
+                            }
+                            
+                            return includeLog;
+                        });
+                    }
+                    
+                    // Reset to first page
+                    currentEnergyPage = 1;
+                    
+                    // Update UI
+                    updateEnergyFilterDisplay();
+                    displayCurrentEnergyPage();
+                }
+                
+                // Update filter display
+                function updateEnergyFilterDisplay() {
+                    const filterDateRange = el('filterDateRange');
+                    const filterCount = el('filterCount');
+                    const filterTotalEnergy = el('filterTotalEnergy');
+                    const filterTotalRuntime = el('filterTotalRuntime');
+                    
+                    if (filterCount) {
+                        filterCount.textContent = 'Total logs: ' + filteredEnergyRecords.length;
+                    }
+                    
+                    if (filterTotalEnergy) {
+                        const totalEnergy = filteredEnergyRecords.reduce((sum, log) => sum + (log.energyValue || 0), 0);
+                        filterTotalEnergy.textContent = 'Total Energy: ' + totalEnergy.toFixed(3)+ ' kWh';
+                    }
+                    
+                    if (filterTotalRuntime) {
+                        const totalRuntimeSeconds = filteredEnergyRecords.reduce((sum, log) => {
+                            if (log.endDate && log.endDate.getFullYear() >= 2000) {
+                                return sum + Math.round((log.endDate - log.startDate) / 1000);
+                            }
+                            return sum;
+                        }, 0);
+                        const totalHours = Math.floor(totalRuntimeSeconds / 3600);
+                        const totalMinutes = Math.floor((totalRuntimeSeconds % 3600) / 60);
+                        filterTotalRuntime.textContent = 'Total Runtime: ' + totalHours +'h ' + totalMinutes +'m';
+                    }
+                    
+                    if (filterDateRange) {
+                        const startDate = el('startDate').value;
+                        const endDate = el('endDate').value;
+                        
+                        if (startDate && endDate) {
+                            filterDateRange.textContent = startDate + ' to ' + endDate;
+                        } else if (startDate) {
+                            filterDateRange.textContent = 'From ' + startDate;
+                        } else if (endDate) {
+                            filterDateRange.textContent = 'Until ' + endDate;
+                        } else {
+                            filterDateRange.textContent = 'All logs';
+                        }
+                    }
+                }
+                
+                // Display current page of energy logs
+                function displayCurrentEnergyPage() {
+                    if (!filteredEnergyRecords || filteredEnergyRecords.length === 0) {
+                        const logContentDiv = _qs(".log-content");
+                        if (logContentDiv) {
+                            logContentDiv.innerHTML = '<p style="text-align: center; color: #6c757d; padding: 20px;">No energy logs found for the selected date range.</p>';
+                        }
+                        const pagination = el('paginationContainer');
+                        const bottomPagination = el('bottomPaginationContainer');
+                        if (pagination) pagination.style.display = 'none';
+                        if (bottomPagination) bottomPagination.style.display = 'none';
+                        return;
+                    }
+                    
+                    const totalPages = Math.max(1, Math.ceil(filteredEnergyRecords.length / energyLogsPerPage));
+                    if (currentEnergyPage > totalPages) currentEnergyPage = totalPages;
+                    if (currentEnergyPage < 1) currentEnergyPage = 1;
+                    
+                    const startIndex = (currentEnergyPage - 1) * energyLogsPerPage;
+                    const endIndex = startIndex + energyLogsPerPage;
+                    displayedEnergyRecords = filteredEnergyRecords.slice(startIndex, endIndex);
+                    
+                    populateEnergyLogs(displayedEnergyRecords);
+                    updateEnergyPagination();
+                }
+                
+                // Pagination helpers
+                function updateEnergyPagination() {
+                    // Update top pagination
+                    const pagination = el('paginationContainer');
+                    const prevBtn = el('prevPageBtn');
+                    const nextBtn = el('nextPageBtn');
+                    const pageInfo = el('pageInfo');
+
+                    // Update bottom pagination
+                    const bottomPagination = el('bottomPaginationContainer');
+                    const bottomPrevBtn = el('bottomPrevPageBtn');
+                    const bottomNextBtn = el('bottomNextPageBtn');
+                    const bottomPageInfo = el('bottomPageInfo');
+
+                    const totalPages = Math.max(1, Math.ceil(filteredEnergyRecords.length / energyLogsPerPage));
+
+                    // Update top pagination
+                    if (pagination && prevBtn && nextBtn && pageInfo) {
+                        pageInfo.textContent = 'Page ' + currentEnergyPage + ' of ' + totalPages;
+                        prevBtn.disabled = currentEnergyPage <= 1;
+                        nextBtn.disabled = currentEnergyPage >= totalPages;
+                        pagination.style.display = totalPages > 1 ? 'flex' : 'none';
+                    }
+
+                    // Update bottom pagination
+                    if (bottomPagination && bottomPrevBtn && bottomNextBtn && bottomPageInfo) {
+                        bottomPageInfo.textContent = 'Page ' + currentEnergyPage + ' of ' + totalPages;
+                        bottomPrevBtn.disabled = currentEnergyPage <= 1;
+                        bottomNextBtn.disabled = currentEnergyPage >= totalPages;
+                        bottomPagination.style.display = totalPages > 1 ? 'flex' : 'none';
+                    }
+                }
+                
+                function goToPreviousPage() {
+                    if (currentEnergyPage > 1) {
+                        currentEnergyPage -= 1;
+                        displayCurrentEnergyPage();
+                    }
+                }
+                
+                function goToNextPage() {
+                    const totalPages = Math.max(1, Math.ceil(filteredEnergyRecords.length / energyLogsPerPage));
+                    if (currentEnergyPage < totalPages) {
+                        currentEnergyPage += 1;
+                        displayCurrentEnergyPage();
+                    }
+                }
+                
+                // Apply date filter
+                function applyDateFilter() {
+                    const startDate = el('startDate').value;
+                    const endDate = el('endDate').value;
+                    const newLogsPerPage = parseInt(el('logLimit').value);
+                    
+                    // Update logs per page if changed
+                    if (newLogsPerPage !== energyLogsPerPage) {
+                        energyLogsPerPage = newLogsPerPage;
+                    }
+                    
+                    filterEnergyLogsByDate(startDate, endDate);
+                    toggleFilter();
+                }
+                
+                // Clear date filter
+                function clearDateFilter() {
+                    el('startDate').value = '';
+                    el('endDate').value = '';
+                    el('erSD').style.display = 'none';
+                    el('erED').style.display = 'none';
+                    el('applyFilterBtn').disabled = false;
+                    filterEnergyLogsByDate('', ''); // Apply filter to show all logs
+                }
+        </script>
+        <!-- <div id="stale-message" style="display:none ;">
+          The connection to the switch is lost. Please refresh the page.
+        </div> -->
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,102 @@
+// CONFIG - update these
+const HOST = "https://iot.eviqtech.com";
+const USERNAME = "aaaaaaaaa";
+const PASSWORD = "bbbbbbb";
+const DEVICE_ID = "ccccccccccc";
+const KEY = "relayStatus"; // e.g. "temperature"
+
+// Step 1: Login and get token
+const loginRes = await fetch(`${HOST}/api/auth/login`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ username: USERNAME, password: PASSWORD })
+});
+const { token } = await loginRes.json();
+console.log("Token:", token);
+
+// Step 2: Query future-timestamped telemetry
+const NOW = Date.now();
+const FUTURE_TS = 4102444800000; // year 2099
+
+const res = await fetch(
+  `${HOST}/api/plugins/telemetry/DEVICE/${DEVICE_ID}/values/timeseries?keys=${KEY}&startTs=${NOW}&endTs=${FUTURE_TS}&limit=100`,
+  { headers: { "X-Authorization": `Bearer ${token}` } }
+);
+const data = await res.json();
+console.log("Future telemetry data:", data);
+
+// Step 3: Pretty print with human-readable timestamps
+if (data[KEY]) {
+  data[KEY].forEach(entry => {
+    console.log({
+      ts: entry.ts,
+      readable: new Date(entry.ts).toISOString(),
+      value: entry.value
+    });
+  });
+} else {
+  console.log("No future-timestamped data found for key:", KEY);
+}
+
+
+
+/// Old entries count grouped in  week
+
+
+const token = localStorage.getItem("jwt_token");
+
+// Time range: from beginning of time to 1 month ago
+const ONE_MONTH_AGO = Date.now() - (30 * 24 * 60 * 60 * 1000);
+const START_TS = 0; // beginning of time
+
+console.log("Fetching telemetry older than:", new Date(ONE_MONTH_AGO).toISOString());
+
+// Fetch with high limit (adjust if needed)
+const res = await fetch(
+  `/api/plugins/telemetry/DEVICE/${DEVICE_ID}/values/timeseries?keys=${KEY}&startTs=${START_TS}&endTs=${ONE_MONTH_AGO}&limit=50000&orderBy=ASC`,
+  { headers: { "X-Authorization": `Bearer ${token}` } }
+);
+const data = await res.json();
+
+if (!data[KEY] || data[KEY].length === 0) {
+  console.log("No data found older than 1 month.");
+} else {
+  console.log(`Total records older than 1 month: ${data[KEY].length}`);
+
+  // Group by week
+  const weeklyGroups = {};
+
+  data[KEY].forEach(entry => {
+    const date = new Date(entry.ts);
+
+    // Get Monday of that week as the week key
+    const day = date.getDay(); // 0=Sun, 1=Mon...
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1); // adjust to Monday
+    const monday = new Date(date.setDate(diff));
+    monday.setHours(0, 0, 0, 0);
+
+    const weekKey = monday.toISOString().split("T")[0]; // e.g. "2024-01-08"
+
+    if (!weeklyGroups[weekKey]) {
+      weeklyGroups[weekKey] = 0;
+    }
+    weeklyGroups[weekKey]++;
+  });
+
+  // Sort by week and display
+  const sorted = Object.entries(weeklyGroups).sort(([a], [b]) => a.localeCompare(b));
+
+  console.log("\n📅 Telemetry count grouped by week (week starting Monday):");
+  console.table(
+    sorted.map(([weekStart, count]) => ({
+      "Week Starting": weekStart,
+      "Week Ending": new Date(new Date(weekStart).getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      "Record Count": count
+    }))
+  );
+
+  // Summary
+  console.log(`\nTotal weeks with data: ${sorted.length}`);
+  console.log(`Oldest record: ${new Date(data[KEY][0].ts).toISOString()}`);
+  console.log(`Newest in range: ${new Date(data[KEY][data[KEY].length - 1].ts).toISOString()}`);
+}

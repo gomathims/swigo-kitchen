@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/style.css?##VERSION##" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script src="scripts/common.js?##VERSION##" defer></script>
+  <script src="scripts/validation.js?##VERSION##" defer></script>
+  <title>SwiGO Super Smart</title>
+</head>
+
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-eye" viewBox="0 0 576 512">
+        <path d="M288 0C128.94 0 3.85 114.61.3 266.34c-.8 32.34 11.94 63.22 36.02 87.29 10.1 10.09 20.68 19.2 31.87 27.5 62.94 44.48 143.53 68.87 219.82 68.87 144.1 0 269.5-114.6 273-266.34C575.7 82.65 463.96 0 288 0zM287.6 368c-52.76 0-95.96-43.23-95.96-96s43.2-96 95.96-96c52.77 0 95.98 43.22 95.98 96S340.37 368 287.6 368zm0-160a63.73 63.73 0 0 0-63.71 63.7 63.7 63.7 0 0 0 127.41 0A63.73 63.73 0 0 0 287.6 208z"/>
+    </symbol>
+  </svg>
+  <div class="main-container">
+    <header class="nav-bar" >
+      <div>
+        <a href="/" style="float:left;">
+          <img src="images/logo.png" class="logo" />
+        </a>
+        <div  style="float:right;">
+          <div class="logo-images" >
+            <img src="images/wifi_e.svg" id="wifi-e" title="Wifi Excellant" alt="Wifi Excellant" style="display: none;" />
+            <img src="images/wifi_g.svg" id="wifi-g" title="Wifi Good" alt="Wifi Good" style="display: none;" />
+            <img src="images/wifi_w.svg" id="wifi-w" title="Wifi Weak" alt="Wifi Weak" style="display:none;" />
+            <img src="images/ap.png" id="apIcon" title="Access Point" alt="Access Point" style="display: none;" />
+          </div>
+        
+          <span id="apwifiName" style="display: block; font-size: .6rem; "></span>
+        </div>
+      </div>
+      <br clear="all" />
+      <hr style="margin: 5px 0px; border-top: 1px solid #ccc;" />
+
+      <a href="/" class="switch-name-link" style="float:left;">
+        <h2 class="wpg-heading" style="display: block;" id="switchNameText">SuperSmart</h2>
+      </a>
+    </header>
+
+    <div class="page" style="margin-top:6.5rem;">
+      <main id="content">
+        <div class="power-settings-container padding-outer-2">
+            <div class="power-settings gap-flex"></div>
+            <h4 class="main-heading">MQTT Advanced Settings</h4>
+            <div class="wifi-settings i-c-c gap-flex cn pd2 ">
+              
+              <div class="deviceName pb5">
+              <p title="Integration Type" class="pb5">Integration Type</p>
+              <div>
+                <label>
+                <input type="radio" name="integrationType" value="HA" onclick="updateIntegrationType()" /> Homeassistant
+                </label>
+                <!-- <label>
+                <input type="radio" name="integrationType" value="Thingsboard" onclick="updateIntegrationType()" /> Thingsboard
+                </label> -->
+                <label>
+                <input type="radio" name="integrationType" value="GM" onclick="updateIntegrationType()" checked /> General MQTT
+                </label>
+              </div>
+              </div>
+              <div class="deviceName">
+              <p title="Broker Address" class="pb2">Broker Address</p>
+              <input type="text" id="mqttBroker" class="idB cn" name="mqttBroker" placeholder="Enter Broker IP Address" required />
+              </div>
+              <div class="deviceName">
+              <p title="Port" class="pb2">Port</p>
+              <input type="number" id="mqttPort" class="idB cn" name="mqttPort" placeholder="Enter Port (e.g., 1883)" required value="1883" />
+              </div>
+              <div class="deviceName">
+              <p title="Username" class="pb2">Username</p>
+              <input type="text" id="mqttUsername" class="idB cn" name="mqttUsername" placeholder="Enter Username" />
+              </div>
+              <div class="deviceName" id="passwordContainer">
+              <p title="Password" class="pb2">Password</p>
+              <input type="password" id="mqttPassword" class="idB cn" name="mqttPassword" placeholder="Enter Password" />
+              <span class="view-password" onclick="viewPassword('mqttPassword')">
+                <svg class="icon">
+                  <use href="#icon-eye"></use>
+              </svg>
+              </span>
+            </div>
+              <div class="deviceName" id="publishTopicContainer">
+              <p title="Topic to Publish" class="pb2">Topic to Publish</p>
+              <input type="text" id="mqttPublishTopic" class="idB cn" name="mqttPublishTopic" placeholder="Enter Publish Topic" required />
+              </div>
+              <div class="deviceName" id="subscribeTopicContainer">
+              <p title="Topic to Subscribe" class="pb2">Topic to Subscribe</p>
+              <input type="text" id="mqttSubscribeTopic" class="idB cn" name="mqttSubscribeTopic" placeholder="Enter Subscribe Topic" required />
+              </div>
+              <div>
+              <input type="button" id="submitMQTTAdvancedSettings" class="cn button" value="Save" onclick="saveMQTTAdvancedSettings()" />
+              </div>
+              <div>
+              <input type="button" id="sendDiscoveryMessage" class="cn button" value="Send Discovery Message" disabled onclick="sendDiscoveryMessage()" />
+              </div>
+            </div>
+            </div>
+
+            <script>
+            function updateIntegrationType() {
+              const integrationType = _qs('input[name="integrationType"]:checked').value;
+              const publishTopicContainer = el("publishTopicContainer");
+              const subscribeTopicContainer = el("subscribeTopicContainer");
+              const sendDiscoveryMessage = el("sendDiscoveryMessage");
+              const passwordContainer = el("passwordContainer");
+
+              if (integrationType === "HA") {
+                publishTopicContainer.style.display = "none";
+                subscribeTopicContainer.style.display = "none";
+                sendDiscoveryMessage.style.display = "block";
+                passwordContainer.style.display = "block";
+              } 
+              // else if (integrationType === "Thingsboard") {
+              // passwordContainer.style.display = "none";
+              // publishTopicContainer.style.display = "none";
+              // subscribeTopicContainer.style.display = "none";
+              // sendDiscoveryMessage.style.display = "none";
+              // } 
+              else {
+                passwordContainer.style.display = "block";
+                publishTopicContainer.style.display = "block";
+                subscribeTopicContainer.style.display = "block";
+                sendDiscoveryMessage.style.display = "none";
+              }
+            }
+
+            // Initialize the form based on the default selection
+            document.addEventListener("DOMContentLoaded", updateIntegrationType);
+            </script>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchWT("/dn.htm").then((response) => {
+        const v = response.headers.get("switchName");
+        if (v) {
+          const e = _qs("#switchNameText");
+          if (e) {
+            e.innerText = v;
+            document.title = v + " - SwiGO SuperSmart";
+          }
+        }
+      });
+
+      loadMQTTAdvancedSettings();
+    });
+
+    function loadMQTTAdvancedSettings() {
+      fetchWT('/api/getMQTTSettings')
+        .then(response => {
+          if (!response.ok) {
+        throw new Error('Failed to fetch MQTT advanced settings');
+          }
+          return response.json();
+        })
+        .then(data => {
+          el("mqttBroker").value = data.bkr || "";
+          el("mqttPort").value = data.port || "";
+          el("mqttUsername").value = data.user || "";
+          el("mqttPassword").value = data.pass || "";
+          el("mqttPublishTopic").value = data.pTopic || "";
+          el("mqttSubscribeTopic").value = data.sTopic || "";
+
+          // Set the integration type radio button based on the type value
+          if (data.type) {
+        const radio = _qs(`input[name="integrationType"][value="${data.type}"]`);
+        if (radio) {
+          radio.checked = true;
+          updateIntegrationType(); // Update UI based on the selected type
+        }
+          }
+
+          // Enable "Send Discovery Message" button based on conStatus
+          if (data.conStatus) {
+            el("sendDiscoveryMessage").disabled = false;
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error.message);
+        });
+    }
+
+    function saveMQTTAdvancedSettings() {
+      const bkr = el("mqttBroker").value.trim();
+      const port = parseInt(el("mqttPort").value.trim(), 10);
+      const user = el("mqttUsername").value.trim();
+      const pass = el("mqttPassword").value.trim();
+      const pTopic = el("mqttPublishTopic").value.trim();
+      const sTopic = el("mqttSubscribeTopic").value.trim();
+      const type = _qs('input[name="integrationType"]:checked').value;
+
+      if (!bkr || !port || !user ) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      const data = JSON.stringify({
+        bkr,
+        port,
+        user,
+        pass,
+        pTopic,
+        sTopic,
+        type
+      });
+
+      fetchWT("/api/saveMQTTSettings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+      })
+        .then(response => {
+          if (!response.ok) {
+            return response.text().then(errorMessage => {
+              throw new Error(errorMessage);
+            });
+          }
+          return response.text();
+        })
+        .then(result => {
+          alert("MQTT Advanced Settings saved successfully!");
+        })
+        .catch(error => {
+          console.error(error.message);
+          alert("Error saving MQTT Advanced Settings. Please try again.");
+        });
+    }
+    function sendDiscoveryMessage() {
+      fetchWT("/api/sendHADiscovery", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      })
+      .then(response => {
+        if (!response.ok) {
+        return response.text().then(errorMessage => {
+          throw new Error(errorMessage);
+        });
+        }
+        return response.text();
+      })
+      .then(result => {
+        alert("Discovery message will be sent to Home Assistant now!");
+      })
+      .catch(error => {
+        console.error(error.message);
+        alert("Error sending discovery message. Please try again.");
+      });
+    }
+  </script>
+</body>
+
+</html>

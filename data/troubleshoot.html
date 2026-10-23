@@ -1,0 +1,69 @@
+<!-- troubleshoot.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiGO Super Smart - Troubleshoot</title>
+    <script src="scripts/common.js?##VERSION##" defer></script>
+
+</head>
+<body>
+
+    <h1>Troubleshooting</h1>
+
+    <h2>Values 1</h2>
+    <table id="table1">
+        <thead>
+            <tr>
+                <th>Variable Name</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="3">Loading...</td></tr>
+        </tbody>
+    </table>
+
+    <h2>Values 2</h2>
+    <table id="table2">
+        <thead>
+            <tr>
+                <th>Variable Name</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="3">Loading...</td></tr>
+        </tbody>
+    </table>
+
+    <script >
+        // Replace with your actual API URLs
+        const apiURL1 = '/api/getInternalVars1';
+        const apiURL2 = '/api/getInternalVars2';
+        function fetchTableData(tableId, apiUrl) {
+            fetchWithAuth(apiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    el(tableId).querySelector('tbody').innerHTML = data;
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                    el(tableId).querySelector('tbody').innerHTML = `<tr><td colspan="3">Error loading data</td></tr>`;
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchTableData('table1', apiURL1);
+            fetchTableData('table2', apiURL2);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,317 @@
+{
+  "widget": {
+    "typeFullFqn": "tenant.device_list_table_widget_v1",
+    "type": "latest",
+    "sizeX": 24,
+    "sizeY": 12,
+    "config": {
+      "datasources": [
+        {
+          "type": "entity",
+          "name": "",
+          "entityAliasId": "011b5044-931d-849b-4892-6c3a7951a9a5",
+          "filterId": null,
+          "dataKeys": [
+            {
+              "name": "active",
+              "type": "attribute",
+              "label": "Active",
+              "color": "#2196F3",
+              "settings": {},
+              "_hash": 0.1
+            },
+            {
+              "name": "deviceName",
+              "type": "attribute",
+              "label": "Device Name",
+              "color": "#9C27B0",
+              "settings": {},
+              "_hash": 0.2
+            },
+            {
+              "name": "label",
+              "type": "entityField",
+              "label": "Name",
+              "color": "#4CAF50",
+              "settings": {},
+              "_hash": 0.3
+            },
+            {
+              "name": "relayStatus",
+              "type": "timeseries",
+              "label": "Status",
+              "color": "#f44336",
+              "settings": {
+                "align": "center",
+                "sortable": true,
+                "useCellContentFunction": true,
+                "cellContentFunction": "var active = value;\nif (active == 'true') {\n  return '<span style=\"font-size: 14px; color:#FF0000\"><b>ON</b></span>';\n} else {\n  return '<span style=\"font-size: 14px;\">OFF</span>';\n}"
+              },
+              "_hash": 0.4
+            },
+            {
+              "name": "voltage",
+              "type": "timeseries",
+              "label": "Voltage",
+              "color": "#FF9800",
+              "settings": {
+                "align": "right"
+              },
+              "units": "V",
+              "decimals": 0,
+              "_hash": 0.5
+            },
+            {
+              "name": "current",
+              "type": "timeseries",
+              "label": "Current",
+              "color": "#00BCD4",
+              "settings": {
+                "align": "right"
+              },
+              "units": "A",
+              "decimals": 1,
+              "_hash": 0.6
+            },
+            {
+              "name": "macId",
+              "type": "attribute",
+              "label": "MAC ID",
+              "color": "#607D8B",
+              "settings": {
+                "attributeScope": "SERVER_SCOPE"
+              },
+              "_hash": 0.7
+            },
+            {
+              "name": "firmwareVersion",
+              "type": "attribute",
+              "label": "Firmware",
+              "color": "#795548",
+              "settings": {},
+              "_hash": 0.8
+            },
+            {
+              "name": "rtcBattLow",
+              "type": "attribute",
+              "label": "Batt. Low",
+              "color": "#e91e63",
+              "settings": {
+                "align": "left",
+                "sortable": true,
+                "columnWidth": "",
+                "displayAsStatusDot": false,
+                "useCellContentFunction": false,
+                "cellContentFunction": "",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": ""
+              },
+              "_hash": 0.7483924792980948,
+              "aggregationType": null,
+              "units": null,
+              "decimals": null,
+              "funcBody": null,
+              "usePostProcessing": null,
+              "postFuncBody": null
+            },
+            {
+              "name": "dumpAvailable",
+              "type": "attribute",
+              "label": "dumpAvailable",
+              "color": "#ffeb3b",
+              "settings": {
+                "align": "left",
+                "sortable": true,
+                "columnWidth": "",
+                "displayAsStatusDot": false,
+                "useCellContentFunction": false,
+                "cellContentFunction": "",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": ""
+              },
+              "_hash": 0.34089203326170003
+            },
+            {
+              "name": "lastActivityTime",
+              "type": "attribute",
+              "label": "Last Activity",
+              "color": "#03a9f4",
+              "settings": {
+                "align": "left",
+                "sortable": true,
+                "columnWidth": "",
+                "displayAsStatusDot": false,
+                "useCellContentFunction": false,
+                "cellContentFunction": "",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": ""
+              },
+              "_hash": 0.6997428337376779,
+              "aggregationType": null,
+              "units": null,
+              "decimals": null,
+              "funcBody": null,
+              "usePostProcessing": null,
+              "postFuncBody": null
+            },
+            {
+              "name": "cumEnergy",
+              "type": "timeseries",
+              "label": "Cum. Energy",
+              "color": "#ff9800",
+              "settings": {
+                "align": "left",
+                "sortable": true,
+                "columnWidth": "",
+                "displayAsStatusDot": false,
+                "useCellContentFunction": false,
+                "cellContentFunction": "",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": ""
+              },
+              "_hash": 0.7462201030901786,
+              "aggregationType": "NONE",
+              "units": null,
+              "decimals": null,
+              "funcBody": null,
+              "usePostProcessing": null,
+              "postFuncBody": null
+            },
+            {
+              "name": "ownerName",
+              "type": "entityField",
+              "label": "Owner name",
+              "color": "#673ab7",
+              "settings": {
+                "align": "left",
+                "sortable": true,
+                "columnWidth": "",
+                "displayAsStatusDot": false,
+                "useCellContentFunction": false,
+                "cellContentFunction": "",
+                "useCellStyleFunction": false,
+                "cellStyleFunction": ""
+              },
+              "_hash": 0.20563254814837906
+            }
+          ],
+          "alarmFilterConfig": {
+            "statusList": [
+              "ACTIVE"
+            ]
+          }
+        }
+      ],
+      "showTitle": false,
+      "backgroundColor": "#fff",
+      "color": "rgba(0,0,0,0.87)",
+      "padding": "0px",
+      "settings": {
+        "enableSearch": true,
+        "searchThreshold": 5,
+        "persistState": true,
+        "storageType": "session",
+        "statusKey": "active",
+        "defaultSortKey": "__name",
+        "defaultSortOrder": "asc"
+      },
+      "title": "Device List",
+      "dropShadow": false,
+      "enableFullscreen": false,
+      "actions": {
+        "rowClick": [
+          {
+            "name": "open_device_home",
+            "icon": "arrow_forward",
+            "type": "openDashboardState",
+            "targetDashboardStateId": "device_home",
+            "setEntityId": true,
+            "stateEntityParamName": "device_id",
+            "openRightLayout": false,
+            "openInSeparateDialog": false,
+            "openInPopover": false
+          }
+        ],
+        "headerButton": [
+          {
+            "name": "Download CSV",
+            "buttonType": "icon",
+            "icon": "download",
+            "buttonColor": "rgba(0,0,0,0.87)",
+            "useShowWidgetActionFunction": null,
+            "showWidgetActionFunction": "return true;",
+            "type": "custom",
+            "customFunction": "// Download the current device-list table as CSV (one row per device).\nvar data = widgetContext.data || [];\n\nfunction csvEscape(v) {\n    if (v === null || v === undefined) v = '';\n    v = String(v);\n    if (/[\",\\n]/.test(v)) {\n        v = '\"' + v.replace(/\"/g, '\"\"') + '\"';\n    }\n    return v;\n}\n\nfunction fmt(label, value) {\n    if (value === null || value === undefined || value === '') return '';\n    var l = String(label).toLowerCase();\n    if (l === 'active') {\n        return (String(value) === 'true') ? 'Online' : 'Offline';\n    }\n    if (l === 'on - off') {\n        return (String(value) === 'true') ? 'ON' : 'OFF';\n    }\n    if (l === 'last activity') {\n        var n = Number(value);\n        if (!isNaN(n) && n > 0) {\n            return moment(n).format('DD/MM/YYYY HH:mm:ss');\n        }\n    }\n    return value;\n}\n\nvar headers = [];\nvar seen = {};\nvar entities = {};\nvar order = [];\n\ndata.forEach(function(ds) {\n    var label = ds.dataKey.label;\n    if (!seen[label]) { seen[label] = true; headers.push(label); }\n    var eName = ds.datasource.entityName;\n    if (!entities[eName]) { entities[eName] = {}; order.push(eName); }\n    var v = '';\n    if (ds.data && ds.data.length) { v = ds.data[ds.data.length - 1][1]; }\n    entities[eName][label] = v;\n});\n\nif (!order.length) {\n    return;\n}\n\nvar lines = [];\nlines.push(headers.map(csvEscape).join(','));\n\norder.forEach(function(eName) {\n    var row = entities[eName];\n    var cells = headers.map(function(h) {\n        return csvEscape(fmt(h, row[h]));\n    });\n    lines.push(cells.join(','));\n});\n\nvar csv = lines.join('\\n');\nvar blob = new Blob([\"﻿\" + csv], { type: 'text/csv;charset=utf-8;' });\nvar url = URL.createObjectURL(blob);\nvar link = document.createElement('a');\nlink.setAttribute('href', url);\nvar ts = moment().format('YYYY-MM-DD_HH-mm');\nlink.setAttribute('download', 'device_list_' + ts + '.csv');\ndocument.body.appendChild(link);\nlink.click();\ndocument.body.removeChild(link);\nURL.revokeObjectURL(url);\n",
+            "openInSeparateDialog": false,
+            "openInPopover": false,
+            "id": "5f395c0d-bfaa-6b4e-2a3a-30c188f5448e"
+          }
+        ]
+      },
+      "timewindow": {
+        "displayValue": "",
+        "hideAggregation": false,
+        "hideAggInterval": false,
+        "hideTimezone": false,
+        "selectedTab": 0,
+        "realtime": {
+          "realtimeType": 1,
+          "interval": 1000,
+          "timewindowMs": 60000,
+          "quickInterval": "CURRENT_DAY",
+          "hideInterval": false,
+          "hideLastInterval": false,
+          "hideQuickInterval": false
+        },
+        "history": {
+          "historyType": 0,
+          "interval": 1000,
+          "timewindowMs": 60000,
+          "fixedTimewindow": {
+            "startTimeMs": 1791270609655,
+            "endTimeMs": 1791357009655
+          },
+          "quickInterval": "CURRENT_DAY",
+          "hideInterval": false,
+          "hideLastInterval": false,
+          "hideFixedInterval": false,
+          "hideQuickInterval": false
+        },
+        "aggregation": {
+          "type": "AVG",
+          "limit": 25000
+        }
+      },
+      "useDashboardTimewindow": true,
+      "displayTimewindow": true
+    },
+    "row": 0,
+    "col": 0,
+    "id": "622a146b-7c01-8734-7b8c-64359a997953"
+  },
+  "aliasesInfo": {
+    "datasourceAliases": {
+      "0": {
+        "alias": "All SSS devices",
+        "filter": {
+          "type": "deviceType",
+          "resolveMultiple": true,
+          "deviceTypes": [
+            "SuperSmart"
+          ],
+          "deviceNameFilter": ""
+        }
+      }
+    },
+    "targetDeviceAlias": null
+  },
+  "filtersInfo": {
+    "datasourceFilters": {}
+  },
+  "originalSize": {
+    "sizeX": 24,
+    "sizeY": 12,
+    "resizable": true
+  },
+  "originalColumns": 24
+}

@@ -1,0 +1,260 @@
+{
+  "widget": {
+    "typeFullFqn": "tenant.device_control_v12",
+    "type": "latest",
+    "sizeX": 8,
+    "sizeY": 12,
+    "config": {
+      "datasources": [
+        {
+          "type": "entity",
+          "name": "",
+          "entityAliasId": "0065958c-49a1-d583-52c0-f9ca55ca19f5",
+          "filterId": null,
+          "dataKeys": [
+            {
+              "name": "voltage",
+              "type": "timeseries",
+              "label": "Voltage",
+              "color": "#2196F3",
+              "settings": {},
+              "_hash": 0.1,
+              "units": "V",
+              "decimals": 2
+            },
+            {
+              "name": "current",
+              "type": "timeseries",
+              "label": "Current",
+              "color": "#4CAF50",
+              "settings": {},
+              "_hash": 0.2,
+              "units": "A",
+              "decimals": 3
+            },
+            {
+              "name": "relayStatus",
+              "type": "timeseries",
+              "label": "Relay Status",
+              "color": "#f44336",
+              "settings": {},
+              "_hash": 0.3,
+              "units": "",
+              "decimals": 0
+            },
+            {
+              "name": "power",
+              "type": "timeseries",
+              "label": "Power",
+              "color": "#FF9800",
+              "settings": {},
+              "_hash": 0.4,
+              "units": "W",
+              "decimals": 2
+            },
+            {
+              "name": "energy",
+              "type": "timeseries",
+              "label": "Energy",
+              "color": "#9C27B0",
+              "settings": {},
+              "_hash": 0.5,
+              "units": "kWh",
+              "decimals": 2
+            },
+            {
+              "name": "cumEnergy",
+              "type": "timeseries",
+              "label": "Cumulative Energy",
+              "color": "#795548",
+              "settings": {},
+              "_hash": 0.6,
+              "units": "kWh",
+              "decimals": 2
+            },
+            {
+              "name": "remainingDuration",
+              "type": "timeseries",
+              "label": "Remaining Duration",
+              "color": "#607D8B",
+              "settings": {},
+              "_hash": 0.7,
+              "units": "s",
+              "decimals": 0
+            },
+            {
+              "name": "duration",
+              "type": "timeseries",
+              "label": "Duration",
+              "color": "#9E9E9E",
+              "settings": {},
+              "_hash": 0.75,
+              "units": "min",
+              "decimals": 0
+            },
+            {
+              "name": "resync",
+              "type": "timeseries",
+              "label": "Resync",
+              "color": "#BDBDBD",
+              "settings": {},
+              "_hash": 0.76,
+              "units": "",
+              "decimals": 0
+            },
+            {
+              "name": "active",
+              "type": "attribute",
+              "label": "Device Active",
+              "color": "#009688",
+              "settings": {},
+              "_hash": 0.8,
+              "units": "",
+              "decimals": 0
+            },
+            {
+              "name": "eventMessage",
+              "type": "timeseries",
+              "label": "Event Message",
+              "color": "#455A64",
+              "settings": {},
+              "_hash": 0.9,
+              "units": "",
+              "decimals": 0
+            },
+            {
+              "name": "fw_update_available",
+              "type": "attribute",
+              "label": "FW Update Available",
+              "color": "#FF9800",
+              "settings": {},
+              "_hash": 0.91,
+              "units": "",
+              "decimals": 0
+            },
+            {
+              "name": "target_fw_version",
+              "type": "attribute",
+              "label": "Target FW Version",
+              "color": "#FF9800",
+              "settings": {},
+              "_hash": 0.92,
+              "units": "",
+              "decimals": 0
+            },
+            {
+              "name": "firmwareVersion",
+              "type": "attribute",
+              "label": "Firmware Version",
+              "color": "#FF9800",
+              "settings": {},
+              "_hash": 0.93,
+              "units": "",
+              "decimals": 0
+            },
+            {
+              "name": "fw_state",
+              "type": "attribute",
+              "label": "FW State",
+              "color": "#FF9800",
+              "settings": {},
+              "_hash": 0.94,
+              "units": "",
+              "decimals": 0
+            },
+            {
+              "name": "fw_progress",
+              "type": "timeseries",
+              "label": "FW Progress",
+              "color": "#4CAF50",
+              "settings": {},
+              "_hash": 0.95,
+              "units": "%",
+              "decimals": 0
+            },
+            {
+              "name": "durationSecs",
+              "type": "timeseries",
+              "label": "durationSecs",
+              "color": "#00bcd4",
+              "settings": {},
+              "_hash": 0.5118958561662212
+            }
+          ],
+          "alarmFilterConfig": {
+            "statusList": [
+              "ACTIVE"
+            ]
+          }
+        }
+      ],
+      "timewindow": {
+        "displayValue": "",
+        "selectedTab": 0,
+        "realtime": {
+          "realtimeType": 1,
+          "interval": 1000,
+          "timewindowMs": 60000,
+          "quickInterval": "CURRENT_DAY",
+          "hideInterval": false,
+          "hideLastInterval": false,
+          "hideQuickInterval": false
+        },
+        "history": {
+          "historyType": 0,
+          "interval": 1000,
+          "timewindowMs": 60000,
+          "fixedTimewindow": {
+            "startTimeMs": 1783938341836,
+            "endTimeMs": 1784024741836
+          },
+          "quickInterval": "CURRENT_DAY",
+          "hideInterval": false,
+          "hideLastInterval": false,
+          "hideFixedInterval": false,
+          "hideQuickInterval": false
+        },
+        "aggregation": {
+          "type": "AVG",
+          "limit": 25000
+        }
+      },
+      "showTitle": false,
+      "backgroundColor": "#fff",
+      "color": "rgba(0,0,0,0.87)",
+      "padding": "0px",
+      "settings": {},
+      "title": "Device Control v9",
+      "dropShadow": true,
+      "enableFullscreen": false,
+      "useDashboardTimewindow": true,
+      "showLegend": false,
+      "displayTimewindow": true
+    },
+    "row": 0,
+    "col": 0,
+    "id": "6c408958-1bf0-bf27-9dd9-2dc3b55b9443"
+  },
+  "aliasesInfo": {
+    "datasourceAliases": {
+      "0": {
+        "alias": "selected_device",
+        "filter": {
+          "type": "stateEntity",
+          "resolveMultiple": false,
+          "stateEntityParamName": "device_id",
+          "defaultStateEntity": null
+        }
+      }
+    },
+    "targetDeviceAlias": null
+  },
+  "filtersInfo": {
+    "datasourceFilters": {}
+  },
+  "originalSize": {
+    "sizeX": 15,
+    "sizeY": 12
+  },
+  "originalColumns": 24
+}

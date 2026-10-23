@@ -1,0 +1,212 @@
+{
+  "_v": 1,
+  "_base": "https://www.eviqtech.com/manual/swigo-supersmart/",
+  "home.control": {
+    "t": "Device Control",
+    "s": "Set hours and minutes to run, then switch the device on. A countdown replaces the boxes while it runs; <br><br>Below the switch is the next enabled schedule that will start. In case of cyclic schedule the next cycle that will start will be shown.",
+    "l": "#home-page"
+  },
+  "home.telemetry": {
+    "t": "Live Readings",
+    "s": "Voltage, current, power, this session's energy and cumulative energy, updated live from the device.<br>Power and energy are not measured on 3-phase installations."
+  },
+  "home.alerts": {
+    "t": "Alerts",
+    "s": "Fault and information messages such as dry run, overload, low or high voltage, and float switch state."
+  },
+  "home.logs": {
+    "t": "Recent Logs",
+    "s": "The latest device events with date and time. Use \"More\" to open the full log with filters."
+  },
+  "schedule.details": {
+    "t": "Schedule Details",
+    "s": "Schedule Type: Daily runs every day; Weekly runs only on the days ticked under Run Every.<br><br>Duration based schedules will run only for the duration and only between the selected timings. Enable <b>Restart after power resumption</b> in protection settings to complete duration even after a power-cut.<br><br>Timings: start and end time of the run. They cannot be the same, and an end time earlier than the start is treated as running past midnight.<br><br>The toggle at the top enables or disables this schedule without deleting it; the bin removes it for good.",
+    "l": "#schedules-page"
+  },
+  "schedule.cyclic": {
+    "t": "Cyclic Schedule",
+    "s": "Repeats an on/off cycle between the start and end time instead of running continuously.",
+    "l": "#schedules-page:~:text=Cyclic%20Scheduling%20(Detailed)"
+  },
+  "power.dryrunCurrent": {
+    "t": "Dryrun Current",
+    "s": "The device stops if current stays below this value for 4 to 7 seconds.<br>Example: a pump running with no water draws about 20% less than its normal current.",
+    "l": "#protection-settings"
+  },
+  "power.dryrunRestart": {
+    "t": "Restart After Dryrun",
+    "s": "Tick this to let the device try again after a dryrun fault, and set the retry time below.",
+    "l": "#protection-settings"
+  },
+  "power.dryrunRetry": {
+    "t": "Dryrun Retry",
+    "s": "Delay in minutes before the device retries after a dryrun fault.",
+    "l": "#protection-settings"
+  },
+  "power.protectionOnly": {
+    "t": "Protection Only",
+    "s": "Choose Yes if this unit sits before a master switch and only protects the load instead of controlling it.",
+    "l": "#protection-settings"
+  },
+  "power.thresholdCurrent": {
+    "t": "Threshold Current",
+    "s": "For a protection-only device, dryrun detection starts only once current has reached this value.",
+    "l": "#protection-settings"
+  },
+  "power.overcurrent": {
+    "t": "Overload Current",
+    "s": "The device stops if current stays above this value for 4 to 7 seconds.<br>Example: a seized shaft or damaged winding draws about 20% more than the normal current.",
+    "l": "#protection-settings:~:text=Overload%20Protection%20(Over%2DCurrent)"
+  },
+  "power.overcurrentRestart": {
+    "t": "Restart After Overload",
+    "s": "Tick this to let the device try again after an overload fault, and set the retry time below."
+  },
+  "power.overcurrentRetry": {
+    "t": "Overload Retry",
+    "s": "Delay in minutes before the device retries after an overload fault."
+  },
+  "power.lowVoltage": {
+    "t": "Low Voltage Limit",
+    "s": "The device will not start, and stops while running, if voltage stays below this value for more than 7 seconds.<br>Running a motor on low voltage makes it draw more current and heat up.",
+    "l": "#voltage-protection"
+  },
+  "power.lowVoltageRestart": {
+    "t": "Restart After Low Voltage",
+    "s": "Tick this to let the device try again after a low voltage fault.<br>On 3-phase units this setting also covers phase failure and phase sequence reversal."
+  },
+  "power.lowVoltageRetry": {
+    "t": "Low Voltage Retry",
+    "s": "Delay in minutes before the device retries after a low voltage fault.<br>Retries happen only within the scheduled time; if the retry falls after it, the device stays off."
+  },
+  "power.highVoltage": {
+    "t": "High Voltage Limit",
+    "s": "The device stops if voltage goes above this value.<br>Sustained high voltage damages motor insulation and capacitors over time.",
+    "l": "#voltage-protection"
+  },
+  "power.highVoltageRestart": {
+    "t": "Restart After High Voltage",
+    "s": "Tick this to let the device try again after a high voltage fault."
+  },
+  "power.highVoltageRetry": {
+    "t": "High Voltage Retry",
+    "s": "Delay in minutes before the device retries after a high voltage fault.<br>Retries happen only within the scheduled time; if the retry falls after it, the device stays off."
+  },
+  "power.powerResumeRestart": {
+    "t": "Restart After Power Resumes",
+    "s": "Tick this to let the device start again by itself once mains power comes back during a run or a schedule.",
+    "l": "#protection-settings:~:text=Additional%20Protection%20Settings"
+  },
+  "power.restartDelay": {
+    "t": "Restart Delay",
+    "s": "Minutes to wait before restarting after power resumes.<br>The delay protects the load from the voltage spikes that often follow a power cut.",
+    "l": "#protection-settings:~:text=Additional%20Protection%20Settings"
+  },
+  "power.maxRunDuration": {
+    "t": "Max Run Duration",
+    "s": "Longest the device may run continuously before it must take a break. Valid range is 1 to 1440 minutes.",
+    "l": "#protection-settings:~:text=Additional%20Protection%20Settings"
+  },
+  "power.breakTime": {
+    "t": "Break Time",
+    "s": "How long the device stays off after reaching the maximum run duration. Valid range is 1 to 1440 minutes.",
+    "l": "#protection-settings:~:text=Additional%20Protection%20Settings"
+  },
+  "settings.deviceTime": {
+    "t": "Device Time",
+    "s": "The device's own clock, synchronised every time you open this page.<br>When the SuperSmart is on Wi-Fi the time syncs automatically. If the battery is down, a warning will appear here",
+    "l": "#settings-page:~:text=RTC%20Backup%20Battery%20Alert"
+  },
+  "settings.wifi": {
+    "t": "Wi-Fi Settings",
+    "s": "Connect the device to your local Wi-Fi so you can reach this portal from anywhere on that network.<br>If the saved network is unavailable the device falls back to its own access point.<br>Remove Wi-Fi forgets the saved network and puts the device back into access point mode - connect to the device's own _AP network to reach this portal again.",
+    "l": "#annexure-wifi"
+  },
+  "settings.wifiIp": {
+    "t": "IP Settings",
+    "s": "Optional. Set a preferred IP so the portal is always at the same address; reserve it in your router too.<br>Subnet mask and DNS are needed only if your network differs from the defaults."
+  },
+  "settings.deviceName": {
+    "t": "Device Name",
+    "s": "A name of 4 to 20 characters, for example Sump-motor. The device restarts after a name change.<br>The portal is then also reachable at http://name.local"
+  },
+  "settings.devicePin": {
+    "t": "Device PIN",
+    "s": "A 4-digit PIN that protects access to this portal."
+  },
+  "settings.apPassword": {
+    "t": "Access Point Password",
+    "s": "Password for the device's own Wi-Fi network, named after the device with _AP added.<br>Set one so nobody nearby can connect to the device."
+  },
+  "settings.logs": {
+    "t": "Logs",
+    "s": "Clear all stored operation logs, or reset the cumulative energy counter back to zero."
+  },
+  "settings.restart": {
+    "t": "Restart Device",
+    "s": "Restart reboots the device for troubleshooting.<br>Clear Fault Conditions resumes operation once a dryrun, overload or voltage fault has been fixed, without waiting for the retry delay."
+  },
+  "settings.cloud": {
+    "t": "Cloud Settings",
+    "s": "Enter your email address to register this device with the EVIQtech cloud. You will receive a link to set your password.",
+    "l": "#cloud-settings"
+  },
+  "settings.cloudStatus": {
+    "t": "Cloud Status",
+    "s": "Shows the cloud connection state. If the device stays disconnected, check your Wi-Fi and that your router allows outgoing port 1883."
+  },
+  "settings.firmware": {
+    "t": "Firmware Update",
+    "s": "Install a newer firmware file on the device. Do not switch off power while an update is running."
+  },
+  "settings.floatSwitch": {
+    "t": "Float Switch",
+    "s": "Tank Full: connect the float switch NO contacts, which close when the tank is full.<br>Flow or Tank Full/Empty: NO contacts of a flow paddle switch detect flow, or NC float contacts start and stop the pump by tank level.",
+    "l": "#annexure-float"
+  },
+  "settings.floatFlowDelay": {
+    "t": "Flow Delays",
+    "s": "Seconds to wait after flow starts or stops before the relay is switched. Valid range is 0 to 300 seconds."
+  },
+  "settings.masterRemote": {
+    "t": "Master / Remote",
+    "s": "Master accepts on/off signals from a remote SuperSmart; Remote sends them to a master.<br>For local Wi-Fi control both units must be on the same network and you must give the master's URL and PIN.",
+    "l": "#annexure-master-remote"
+  },
+  "firstuse.device": {
+    "t": "Device Settings",
+    "s": "Give the device a name and a 4-digit PIN so the portal can be identified and protected.<br>The default name works, but change it if another SuperSmart is nearby, or name it after the job - Sump-motor, Geiser-2."
+  },
+  "firstuse.wifi": {
+    "t": "WiFi Network",
+    "s": "Optional. Join the device to your WiFi so the portal is reachable from anywhere on that network.<br>Skip it for now and set it later under Settings; the device keeps its own access point either way."
+  },
+  "login.pin": {
+    "t": "Security PIN",
+    "s": "The 4-digit PIN set during setup.<br>If it has been forgotten, factory reset the device by holding the second, third and stop buttons together for 20 seconds until the blue LED lights. A reset clears all settings."
+  },
+  "techsetup.circuit": {
+    "t": "Circuit Settings",
+    "s": "How the device is wired: shunt or CT current sensing, LED-pin type, single or 3-phase motor, 5V DC tapping, Ethernet, and leak detection.<br>These match the hardware build and should not be changed on a working unit."
+  },
+  "techsetup.inrush": {
+    "t": "Inrush Settle Time",
+    "s": "Added on top of the built-in 7-second settle time before overload protection starts.<br>Useful for motors with a long inrush or a delayed self-starter."
+  },
+  "techsetup.timing": {
+    "t": "Timing Configuration",
+    "s": "Sets the run durations offered by the physical buttons on the device.<br>Cloud server access must be configured before any data is sent."
+  },
+  "cert.upload": {
+    "t": "Upload Certificate",
+    "s": "Replaces the built-in root CA used for the secure cloud connection.<br>Upload a PEM file or paste its text. Only needed when your network inspects TLS traffic."
+  },
+  "mqtt.sync": {
+    "t": "Sync Control",
+    "s": "Choose Yes to send telemetry and logs to the cloud.<br>With No the device runs entirely on its own and keeps data locally."
+  },
+  "mqtt.access": {
+    "t": "Cloud Access",
+    "s": "The access token that identifies this device to the cloud server.<br>It must be set before any data can be sent."
+  }
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="scripts/common.js?##VERSION##" defer></script>
+  <script src="scripts/validation.js?##VERSION##" defer></script>
+  
+</head>
+<body>
+  <form name="uploadForm" method="POST" action="/updateSystem" enctype="multipart/form-data" onsubmit="return firmwareUpdate(event)">
+    <label for="firmware">Firmware :</label><br>
+    <input type="file" name="firmware"><br><br>
+    
+    <input type="submit" value="Upload and Update">
+  </form>
+  <div id="popup" style="
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 15px;
+  background-color: #000;
+  z-index: 9999;
+  border: 2px solid black; 
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); 
+  color: white; 
+  width: 250px; 
+">
+<span id="popupText">asdfsadf</span>
+
+  <!-- Firmware upload loader overlay -->
+  <div id="fw-upload-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;flex-direction:column;align-items:center;justify-content:center;gap:1rem;">
+    <div class="fw-spinner" style="width:52px;height:52px;border:5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:fw-spin 0.9s linear infinite;"></div>
+    <p style="color:#fff;font-size:1rem;margin:0;font-weight:500;">Uploading firmware, please wait...</p>
+  </div>
+  <style>
+    @keyframes fw-spin { to { transform: rotate(360deg); } }
+  </style>
+</body>
+</html>
